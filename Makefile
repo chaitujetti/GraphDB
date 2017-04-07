@@ -17,7 +17,7 @@ DOCFILES=bufmgr diskmgr global chainexception heap btree iterator index
 
 ##############  update the above for each assignment in making
 
-ASSIGN=/Users/chaitanya/Code/DBMSI/Project/src
+ASSIGN=/Users/chaitanya/Code/DBMSI/Project/GraphDB
 LIBDIR=$(ASSIGN)/lib
 KEY=$(ASSIGN)/key
 SRC=$(ASSIGN)/src

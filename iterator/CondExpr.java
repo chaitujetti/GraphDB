@@ -48,6 +48,8 @@ public class CondExpr {
     if ( type1.attrDesc == AttrType.attrDesc && type2.attrDesc == AttrType.attrDesc)
     {
         distance = 0;
+    } else {
+        distance = -1;
     }
     
     next = null;
