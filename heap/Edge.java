@@ -13,10 +13,12 @@ public class Edge extends Tuple {
     private NID source;
     private NID destination;
     private int weight;
+    private String sourceNodeLabel;
+    private String destinationNodeLabel;
 
     public Edge() {
         super();
-        super.setFieldCount((short) 4);
+        super.setFieldCount((short) 6);
     }
 
     public Edge(byte[] anode, int offset)
@@ -37,6 +39,8 @@ public class Edge extends Tuple {
         this.label=e.label;
         this.destination=e.destination;
         this.weight=e.weight;
+        this.sourceNodeLabel=e.sourceNodeLabel;
+        this.destinationNodeLabel=e.destinationNodeLabel;
     }
 
     public Edge(Tuple tuple) throws IOException {
@@ -53,7 +57,8 @@ public class Edge extends Tuple {
             destId.slotNo = Convert.getIntValue(22, this.data);
             this.destination = destId;
             this.weight = Convert.getIntValue(26, this.data);
-
+            this.sourceNodeLabel = Convert.getStrValue(30,this.data,10);
+            this.destinationNodeLabel = Convert.getStrValue(40,this.data,10);
         }
     }
 
@@ -73,13 +78,23 @@ public class Edge extends Tuple {
 
     }
 
+    public String getSourceNodeLabel()
+    {
+        return sourceNodeLabel;
+    }
+
+    public String getDestinationNodeLabel()
+    {
+        return destinationNodeLabel;
+    }
+
     public byte[] getEdgeByteArray()
     {
         return getTupleByteArray();
     }
 
     private int getEdgeLength() {
-        return 30;
+        return 50;
 
     }
 
@@ -117,6 +132,19 @@ public class Edge extends Tuple {
         return this;
     }
 
+    public Edge setSourceNodeLabel(String sourceNodeLabel) throws IOException {
+        this.sourceNodeLabel = sourceNodeLabel;
+        Convert.setStrValue(this.sourceNodeLabel, 30, data);
+        tuple_length = getEdgeLength();
+        return this;
+    }
+
+    public Edge setDestinationNodeLabel(String destinationNodeLabel) throws IOException {
+        this.destinationNodeLabel = destinationNodeLabel;
+        Convert.setStrValue(this.destinationNodeLabel, 40, data);
+        tuple_length = getEdgeLength();
+        return this;
+    }
 
     public void print() throws IOException
     {
