@@ -179,8 +179,7 @@ public class TupleUtils
     Descriptor temp = new Descriptor();
     temp.set((short)-1, (short)-1, (short)-1, (short)-1, (short)-1);
     if(temp.equal(target) == 1){
-      double dist = t1_d.distance(t2_d);
-      return (dist <= distance) ? 0 : 1;
+      return (t1_d.distance(t2_d) <= distance) ? 0 : 1;
     } else {
       double dist1 = t1_d.distance(target);
       double dist2 = t2_d.distance(target);

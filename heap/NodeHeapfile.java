@@ -152,10 +152,6 @@ public class NodeHeapfile extends Heapfile {
         Tuple tuple = super.getRecord(record);
         if (tuple != null) {
             Node newNode = new Node(tuple.data, 0);
-            Descriptor descriptor = Convert.getDescValue(10, tuple.data);
-            String label = Convert.getStrValue(0, tuple.data, 10);
-            newNode.setDesc(descriptor);
-            newNode.setLabel(label);
             return newNode;
         } else
             return null;

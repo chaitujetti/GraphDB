@@ -37,8 +37,8 @@ db:
 	make -C heap
 	make -C index
 	make -C iterator
-	make -C zindex
-	make -C ztree
+	# make -C zindex
+	# make -C ztree
 	make -C phase2
 	
 doc:

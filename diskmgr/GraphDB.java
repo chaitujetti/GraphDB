@@ -48,10 +48,8 @@ public class GraphDB extends DB
     public BTreeFile edgeLabels_BFile;
     public BTreeFile edgeSourceLabels_BFile;
     public BTreeFile edgeDestinationLabels_BFile;
-    public BTreeFile edgeWeights_BFile;
-
-    public ZTreeFile nodesDescriptors_ZFile;
-
+    // public BTreeFile edgeWeights_BFile;
+    
     public static int Graphcounter;
     public int GraphID;
     public int type;
@@ -90,10 +88,7 @@ public class GraphDB extends DB
         edgeLabels_BFile=new BTreeFile("EdgeLabelsBtree_"+DBname,AttrType.attrString,100,1);
         edgeSourceLabels_BFile=new BTreeFile("EdgeSourceLabelsBtree_"+DBname,AttrType.attrString,100,1);
         edgeDestinationLabels_BFile=new BTreeFile("EdgeDestinationLabelsBtree_"+DBname,AttrType.attrString,100,1);
-        edgeWeights_BFile=new BTreeFile("EdgeWeightsBtree_"+DBname,AttrType.attrInteger,4,1);
-
-        nodesDescriptors_ZFile=new ZTreeFile("NodeDescriptorsZtree_"+DBname,AttrType.attrDesc,10,1);
-
+        // edgeWeights_BFile=new BTreeFile("EdgeWeights_BFile_"+DBname,AttrType.attrString,100,1);
     }
 
     public int getNoOfReads()
@@ -204,7 +199,6 @@ public class GraphDB extends DB
     public void insertEdgeIntoGraphDB(byte[] edgeByteArray) throws Exception
     {
         EID eid=ehf.insertEdge(edgeByteArray);
-        //System.out.println("NID data:"+nid.pageNo.pid+" "+nid.slotNo);
         Edge edge=ehf.getEdge(eid);
         NID sourceNID=edge.getSource();
         NID destinationNID=edge.getDestination();
@@ -233,15 +227,21 @@ public class GraphDB extends DB
     public boolean deleteEdgeFromGraphDB(EID eid) throws  Exception
     {
         try {
+            // System.out.println("Deleting edge");
             Edge edge = ehf.getEdge(eid);
             NID sourceNID = edge.getSource();
             NID destinationNID = edge.getDestination();
             Node source = nhf.getNode(sourceNID);
             Node destination = nhf.getNode(destinationNID);
             deleteEdgeFromIndex(eid, edge, source, destination);
+            // System.out.println("Deleted edge1");
             updateEdgeNodeLabels(sourceNID, hashSourceNodesPresent, 1);
+            // System.out.println("Deleted edge2");
             updateEdgeNodeLabels(destinationNID, hashDestinationNodesPresent, 1);
+            // System.out.println("Deleted edge3");
             ehf.deleteEdge(eid);
+            // System.out.println("Deleted edge4");
+            
             return true;
         }
         catch (Exception e){
@@ -251,7 +251,7 @@ public class GraphDB extends DB
 
     public void insertEdgeIntoIndex(EID eid,Edge edge,Node source,Node destination) throws KeyTooLongException,KeyNotMatchException, LeafInsertRecException, IndexInsertRecException, ConstructPageException, UnpinPageException,
             PinPageException, NodeNotMatchException, ConvertException,DeleteRecException, IndexSearchException, IteratorException, LeafDeleteException,
-            InsertException,IOException,FieldNumberOutOfBoundException
+            InsertException,IOException,FieldNumberOutOfBoundException, InvalidTypeException, InvalidTupleSizeException, FieldNumberOutOfBoundException
     {
         String label=edge.getLabel();
         edgeLabels_BFile.insert(new StringKey(label),eid);
@@ -260,7 +260,7 @@ public class GraphDB extends DB
         String destinationLabel=destination.getLabel();
         edgeDestinationLabels_BFile.insert(new StringKey(destinationLabel),eid/*edge.getDestination()*/);
         int weights=edge.getWeight();
-        edgeWeights_BFile.insert(new IntegerKey(weights),eid);
+        // edgeWeights_BFile.insert(new StringKey(Integer.toString(weights)), eid);
         updateEdgeNodeLabels(edge.getSource(),hashSourceNodesPresent,0);//Insert Source Node
         updateEdgeNodeLabels(edge.getDestination(),hashDestinationNodesPresent,0);//Insert Destination Node
     }
@@ -268,30 +268,42 @@ public class GraphDB extends DB
     public void deleteEdgeFromIndex(EID eid,Edge edge,Node source,Node destination) throws IOException, FieldNumberOutOfBoundException, DeleteFashionException,
             LeafRedistributeException, RedistributeException, InsertRecException, KeyNotMatchException, UnpinPageException, IndexInsertRecException,
             FreePageException, RecordNotFoundException, PinPageException, IndexFullDeleteException, LeafDeleteException, IteratorException,
-            ConstructPageException, DeleteRecException, IndexSearchException
+            ConstructPageException, DeleteRecException, IndexSearchException, InvalidTypeException, InvalidTupleSizeException, FieldNumberOutOfBoundException
     {
+        // System.out.println("Here1");
         String label=edge.getLabel();
+        // System.out.println("Here2");
         edgeLabels_BFile.Delete(new StringKey(label),eid);
+        // System.out.println("Here3");
         String sourceLabel=source.getLabel();
+        // System.out.println("Here4");
         edgeSourceLabels_BFile.Delete(new StringKey(sourceLabel),edge.getSource());
+        // System.out.println("Here5");
         String destinationLabel=destination.getLabel();
+        // System.out.println("Here6");
         edgeDestinationLabels_BFile.Delete(new StringKey(destinationLabel),edge.getDestination());
+        // System.out.println("Here7");
         int weights=edge.getWeight();
-        edgeWeights_BFile.Delete(new IntegerKey(weights),eid);
+        // System.out.println(weights);
+        // System.out.println(eid.slotNo);
+        // System.out.println(eid.pageNo);
+        // edgeWeights_BFile.Delete(new StringKey(Integer.toString(weights)), eid);
+        // System.out.println("Here9");
         updateEdgeNodeLabels(edge.getSource(),hashSourceNodesPresent,1);//Delete Source Node
+        // System.out.println("Here Again1");
         updateEdgeNodeLabels(edge.getDestination(),hashDestinationNodesPresent,1);//Delete Destination Node
+        // System.out.println("Here Again2");
     }
 
     public void insertNodeIntoIndex(NID nid,Node node) throws FieldNumberOutOfBoundException, KeyTooLongException, KeyNotMatchException, LeafInsertRecException, IndexInsertRecException, ConstructPageException, UnpinPageException,
             PinPageException, NodeNotMatchException, ConvertException, DeleteRecException, IndexSearchException, IteratorException,
             LeafDeleteException, InsertException, IOException, ztree.KeyTooLongException, ztree.KeyNotMatchException, ztree.LeafInsertRecException, ztree.IndexInsertRecException, ztree.ConstructPageException,
             ztree.UnpinPageException, ztree.PinPageException, ztree.NodeNotMatchException, ztree.ConvertException, ztree.DeleteRecException, ztree.IndexSearchException, ztree.IteratorException,
-            ztree.LeafDeleteException, ztree.InsertException
+            ztree.LeafDeleteException, ztree.InsertException, InvalidTypeException, InvalidTupleSizeException, FieldNumberOutOfBoundException
     {
         String label=node.getLabel();
         nodeLabels_BFile.insert(new StringKey(label),nid);
         Descriptor desc=node.getDesc();
-        nodesDescriptors_ZFile.insert(new ztree.DescriptorKey(desc),nid);
     }
 
     public void deleteNodeFromIndex(NID nid,Node node) throws FieldNumberOutOfBoundException, DeleteFashionException, LeafRedistributeException,
@@ -299,12 +311,11 @@ public class GraphDB extends DB
             RecordNotFoundException, PinPageException,IndexFullDeleteException,LeafDeleteException,IteratorException,ConstructPageException, DeleteRecException,
             IndexSearchException, IOException, ztree.DeleteFashionException, ztree.LeafRedistributeException,ztree.RedistributeException, ztree.InsertRecException, ztree.KeyNotMatchException, ztree.UnpinPageException,
             ztree.IndexInsertRecException, ztree.FreePageException, ztree.RecordNotFoundException, ztree.PinPageException, ztree.IndexFullDeleteException, ztree.LeafDeleteException, ztree.IteratorException, ztree.ConstructPageException,
-            ztree.DeleteRecException, ztree.IndexSearchException
+            ztree.DeleteRecException, ztree.IndexSearchException, InvalidTypeException, InvalidTupleSizeException, FieldNumberOutOfBoundException
     {
         String label=node.getLabel();
         nodeLabels_BFile.Delete(new StringKey(label),nid);
         Descriptor desc=node.getDesc();
-        nodesDescriptors_ZFile.Delete(new ztree.DescriptorKey(desc),nid);
         updateNodeLabels(label,1);//delete node
     }
 

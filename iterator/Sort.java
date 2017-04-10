@@ -212,18 +212,12 @@ public class Sort extends Iterator implements GlobalConst
       cur_node = pcurr_Q.deq();
       if (cur_node == null) break; 
       p_elems_curr_Q --;
-      Descriptor tempDesc = new Descriptor();
-      tempDesc.set((short)-1, (short)-1, (short)-1, (short)-1, (short)-1);
-      if (sortFldType.attrType == AttrType.attrDesc)
-      {
+      if (sortFldType.attrType == AttrType.attrDesc) {
           comp_res = TupleUtils.CompareTupleWithValue(sortFldType, cur_node.tuple,_sort_fld, lastElem,distance,target);
-      }
-      else
-      {
+      } else {
           comp_res = TupleUtils.CompareTupleWithValue(sortFldType, cur_node.tuple, _sort_fld, lastElem);  // need tuple_utils.java
       }
 
-      
       if ((comp_res < 0 && order.tupleOrder == TupleOrder.Ascending) || (comp_res > 0 && order.tupleOrder == TupleOrder.Descending)) {
 	// doesn't fit in current run, put into the other queue
 	try {

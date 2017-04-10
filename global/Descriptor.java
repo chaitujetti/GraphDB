@@ -6,9 +6,10 @@ import static java.lang.Math.sqrt;
  * Created by vamsikrishnag on 3/7/17.
  */
 public class Descriptor {
-    short[] value = new short[5];
+    short[] value;
     public Descriptor()
     {
+        value = new short[5];
         value[0] = 0;
         value[1] = 0;
         value[2] = 0;
@@ -38,9 +39,9 @@ public class Descriptor {
     }
 
     public double distance (Descriptor desc) {
-        int dist = 0;
+        double dist = 0;
         for(int i = 0; i < 5; i++){
-            dist = dist + ((this.value[i] - desc.value[i]) * (this.value[i] - desc.value[i]));
+            dist = dist + Math.pow(this.value[i] - desc.value[i], 2);
         }
         return sqrt(dist);
     }

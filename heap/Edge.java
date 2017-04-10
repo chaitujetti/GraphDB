@@ -10,82 +10,52 @@ import global.*;
 
 public class Edge extends Tuple {
     private String label;
+    private String sourceLabel;
+    private String destinationLabel;
+    private int weight;
     private NID source;
     private NID destination;
-    private int weight;
-    private String sourceNodeLabel;
-    private String destinationNodeLabel;
+    public static final AttrType[] types = { new AttrType(AttrType.attrString), new AttrType(AttrType.attrString), new AttrType(AttrType.attrString), new AttrType(AttrType.attrInteger),
+            new AttrType(AttrType.attrInteger), new AttrType(AttrType.attrInteger), new AttrType(AttrType.attrInteger), new AttrType(AttrType.attrInteger)};
+    public static final short[] sizes = { LABEL_MAX_LENGTH, LABEL_MAX_LENGTH, LABEL_MAX_LENGTH, 4,4,4,4,4};
+    public static final short numFld = 8;
 
-    public Edge() {
+    
+    public Edge() throws IOException, InvalidTypeException, InvalidTupleSizeException
+    {
         super();
-        super.setFieldCount((short) 6);
+        setHdr(numFld, types, sizes);
     }
 
-    public Edge(byte[] anode, int offset)
+    public Edge(byte[] anode, int offset) throws IOException, InvalidTypeException, InvalidTupleSizeException
     {
         super(anode, offset, anode.length);
+        setHdr(numFld, types, sizes);
     }
-    public Edge(byte[] anode, int offset, int length)
+    public Edge(byte[] anode, int offset, int length) throws IOException, InvalidTypeException, InvalidTupleSizeException
     {
         super(anode, offset, length);
+        setHdr(numFld, types, sizes);
     }
 
-
-
-    public Edge(Edge e)
+    public Edge(Edge e) throws IOException, InvalidTypeException, InvalidTupleSizeException
     {
         super(e);
-        this.source=e.source;
+        setHdr(numFld, types, sizes);
+        this.sourceLabel=e.sourceLabel;
+        this.destinationLabel=e.destinationLabel;
         this.label=e.label;
-        this.destination=e.destination;
         this.weight=e.weight;
-        this.sourceNodeLabel=e.sourceNodeLabel;
-        this.destinationNodeLabel=e.destinationNodeLabel;
+        this.source=e.source;
+        this.destination=e.destination;
     }
 
-    public Edge(Tuple tuple) throws IOException {
+    public Edge(Tuple tuple) throws IOException, InvalidTypeException, InvalidTupleSizeException
+    {
+        setHdr(numFld, types, sizes);
         if (tuple != null) {
-            
             this.data = tuple.data;
-            this.label = Convert.getStrValue(0, this.data, 10);
-            NID srcId = new NID();
-            srcId.pageNo.pid = Convert.getIntValue(10, this.data);
-            srcId.slotNo = Convert.getIntValue(14, this.data);
-            this.source = srcId;
-            NID destId = new NID();
-            destId.pageNo.pid = Convert.getIntValue(18, this.data);
-            destId.slotNo = Convert.getIntValue(22, this.data);
-            this.destination = destId;
-            this.weight = Convert.getIntValue(26, this.data);
-            this.sourceNodeLabel = Convert.getStrValue(30,this.data,10);
-            this.destinationNodeLabel = Convert.getStrValue(40,this.data,10);
         }
-    }
-
-    public String getLabel()
-    {
-        return label;
-    }
-
-    public int getWeight()
-    {
-        return weight;
-    }
-
-    public NID getSource()
-    {
-        return source;
-
-    }
-
-    public String getSourceNodeLabel()
-    {
-        return sourceNodeLabel;
-    }
-
-    public String getDestinationNodeLabel()
-    {
-        return destinationNodeLabel;
     }
 
     public byte[] getEdgeByteArray()
@@ -93,42 +63,83 @@ public class Edge extends Tuple {
         return getTupleByteArray();
     }
 
-    private int getEdgeLength() {
-        return 50;
-
-    }
-
-    public NID getDestination()
+    private int getEdgeLength() 
     {
-        return destination;
+        return getLength();
     }
 
-    public Edge setLabel(String label) throws IOException {
+    public String getSourceLabel()  throws IOException, InvalidTypeException, InvalidTupleSizeException, FieldNumberOutOfBoundException
+    {
+        return getStrFld(1);
+    }
+
+    public String getDestinationLabel()  throws IOException, InvalidTypeException, InvalidTupleSizeException, FieldNumberOutOfBoundException
+    {
+        return getStrFld(2);
+    }
+
+    public String getLabel() throws IOException, InvalidTypeException, InvalidTupleSizeException, FieldNumberOutOfBoundException
+    {
+        return getStrFld(3);
+    }
+
+    public int getWeight() throws IOException, InvalidTypeException, InvalidTupleSizeException, FieldNumberOutOfBoundException
+    {
+        return getIntFld(4);
+    }
+
+    public NID getSource() throws IOException, InvalidTypeException, InvalidTupleSizeException, FieldNumberOutOfBoundException
+    {
+        NID sou = new NID();
+        sou.pageNo.pid = getIntFld(5);
+        sou.slotNo = getIntFld(6);
+        return sou;
+    }
+
+    public NID getDestination() throws IOException, InvalidTypeException, InvalidTupleSizeException, FieldNumberOutOfBoundException
+    {
+        NID des = new NID();
+        des.pageNo.pid = getIntFld(7);
+        des.slotNo = getIntFld(8);
+        return des;
+    }
+
+    public Edge setSourceLabel(String label) throws IOException, FieldNumberOutOfBoundException, FieldNumberOutOfBoundException 
+    {
         this.label=label;
-        Convert.setStrValue(this.label, 0, data);
-        tuple_length = getEdgeLength();
+        setStrFld(1, this.label);
         return this;
     }
 
-    public Edge setWeight(int Weight) throws IOException {
+    public Edge setDestinationLabel(String label) throws IOException, FieldNumberOutOfBoundException {
+        this.label=label;
+        setStrFld(2, this.label);
+        return this;
+    }
+
+    public Edge setLabel(String label) throws IOException, FieldNumberOutOfBoundException {
+        this.label=label;
+        setStrFld(3, this.label);
+        return this;
+    }
+
+    public Edge setWeight(int Weight) throws IOException, FieldNumberOutOfBoundException {
         this.weight=Weight;
-        
-        Convert.setIntValue(weight, 26, data);
-        tuple_length = getEdgeLength();
-        return this;
-    }
-    public Edge setSource(NID source) throws IOException {
-        this.source=source;
-        source.pageNo.writeToByteArray(data, 10);
-        Convert.setIntValue(source.slotNo, 14, data);
-        tuple_length = getEdgeLength();
+        setIntFld(4, this.weight);
         return this;
     }
 
-    public Edge setDestination(NID dest) throws IOException {
-        destination=dest;
-        destination.pageNo.writeToByteArray(data, 18);
-        Convert.setIntValue(destination.slotNo, 22, data);
+    public Edge setSource(NID source) throws IOException, FieldNumberOutOfBoundException {
+        this.source=source;
+        setIntFld(5, this.source.pageNo.pid);
+        setIntFld(6, this.source.slotNo);
+        return this;
+    }
+
+    public Edge setDestination(NID dest) throws IOException, FieldNumberOutOfBoundException {
+        this.destination=dest;
+        setIntFld(7, this.destination.pageNo.pid);
+        setIntFld(8, this.destination.slotNo);
         return this;
     }
 
@@ -149,12 +160,13 @@ public class Edge extends Tuple {
     public void print() throws IOException
     {
         System.out.print("[");
+        System.out.print("source : "+this.sourceLabel);
+        System.out.print("Destination : "+this.destinationLabel);
         System.out.print("edge label : "+this.label);
-        System.out.print("source : slotNo : "+this.source.slotNo +", pageNo :"+this.source.pageNo);
-        System.out.print("Destination : slotNo : "+this.destination.slotNo +", pageNo :"+this.destination.pageNo);
         System.out.print("weight : "+this.weight);
         System.out.println("]");
     }
+
     public void edgeCopy(Edge edge)
     {
         byte [] temp = edge.getEdgeByteArray();

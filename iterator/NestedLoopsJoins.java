@@ -132,7 +132,6 @@ public class NestedLoopsJoins  extends Iterator
    *@exception UnknowAttrType attribute type unknown
    *@exception UnknownKeyTypeException key type unknown
    *@exception Exception other exceptions
-
    */
   public Tuple get_next()
     throws IOException,

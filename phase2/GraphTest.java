@@ -131,18 +131,18 @@ class GraphDriver {
                             systemdef.JavabaseDB.createIndexFiles(varargs[1]);
                             dbcreated=true;
                         }
-                        if(Integer.parseInt(varargs[2])==0)
-                        {
-                            Task14.executeQueryTypeZero(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        }
-                        if(Integer.parseInt(varargs[2])==1)
-                        {
-                            Task14.executeQueryTypeOne(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        }
-                        if(Integer.parseInt(varargs[2])==4)
-                        {
-                            Task14.executeQueryTypeFour(Integer.parseInt(varargs[3]),varargs[0],varargs[4],systemdef);
-                        }
+                        // if(Integer.parseInt(varargs[2])==0)
+                        // {
+                        //     Task14.executeQueryTypeZero(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                        // }
+                        // if(Integer.parseInt(varargs[2])==1)
+                        // {
+                        //     Task14.executeQueryTypeOne(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                        // }
+                        // if(Integer.parseInt(varargs[2])==4)
+                        // {
+                        //     Task14.executeQueryTypeFour(Integer.parseInt(varargs[3]),varargs[0],varargs[4],systemdef);
+                        // }
 
 //                        if(varargs.length == 4)
 //                            res = nodequery.computequery(varargs[0],varargs[1],varargs[2],varargs[3]);
@@ -171,34 +171,34 @@ class GraphDriver {
                             systemdef.JavabaseDB.createIndexFiles(varargs[1]);
                             dbcreated=true;
                         }
-                        if(Integer.parseInt(varargs[2])==0)
-                        {
-                            task15_0.executeQueryTypeZero(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        }
-                        if(Integer.parseInt(varargs[2])==1)
-                        {
-                            task15_0.executeQueryTypeOne(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        }
-                        if(Integer.parseInt(varargs[2])==2)
-                        {
-                            task15_0.executeQueryTypeTwo(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        }
-                        if(Integer.parseInt(varargs[2])==3)
-                        {
-                            task15_0.executeQueryTypeThree(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        }
-                        if(Integer.parseInt(varargs[2])==4)
-                        {
-                            task15_0.executeQueryTypeFour(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        }
-                        if(Integer.parseInt(varargs[2])==5)
-                        {
-                            task15_0.executeQueryTypeFive(Integer.parseInt(varargs[3]),varargs[0],Integer.parseInt(varargs[4]),Integer.parseInt(varargs[5]),systemdef);
-                        }
-                        if(Integer.parseInt(varargs[2])==6)
-                        {
-                            task15_0.executeQueryTypeSix(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        }
+                        // if(Integer.parseInt(varargs[2])==0)
+                        // {
+                        //     task15_0.executeQueryTypeZero(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                        // }
+                        // if(Integer.parseInt(varargs[2])==1)
+                        // {
+                        //     task15_0.executeQueryTypeOne(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                        // }
+                        // if(Integer.parseInt(varargs[2])==2)
+                        // {
+                        //     task15_0.executeQueryTypeTwo(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                        // }
+                        // if(Integer.parseInt(varargs[2])==3)
+                        // {
+                        //     task15_0.executeQueryTypeThree(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                        // }
+                        // if(Integer.parseInt(varargs[2])==4)
+                        // {
+                        //     task15_0.executeQueryTypeFour(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                        // }
+                        // if(Integer.parseInt(varargs[2])==5)
+                        // {
+                        //     task15_0.executeQueryTypeFive(Integer.parseInt(varargs[3]),varargs[0],Integer.parseInt(varargs[4]),Integer.parseInt(varargs[5]),systemdef);
+                        // }
+                        // if(Integer.parseInt(varargs[2])==6)
+                        // {
+                        //     task15_0.executeQueryTypeSix(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                        // }
                         /*if(varargs.length == 4)
                             res = edgequery.computequery(varargs[0],varargs[1],varargs[2],varargs[3]);
                         else if(varargs.length == 5)

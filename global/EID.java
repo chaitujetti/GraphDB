@@ -15,4 +15,8 @@ public class EID extends RID
         super(pageno,slotno);
     }
 
+    public String display() {
+		return "EID [Page Number=" + pageNo + ", Slot Number=" + slotNo + "]";
+	}
+
 }

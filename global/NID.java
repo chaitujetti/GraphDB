@@ -17,5 +17,9 @@ public class NID extends RID
     {
         super(pageno,slotno);
     }
+
+    public String display() {
+		return "NID [Page Number=" + pageNo + ", Slot Number=" + slotNo + "]";
+	}
 }
 

@@ -47,7 +47,7 @@ public class EScan extends Scan{
      */
     public Edge getNext(EID eid)
             throws InvalidTupleSizeException,
-            IOException
+            IOException, InvalidTypeException
     {
         RID rid = new RID(eid.pageNo,eid.slotNo);
         Tuple tuple = super.getNext(rid);
@@ -56,23 +56,6 @@ public class EScan extends Scan{
         
         if(tuple!=null){
             Edge edge = new Edge(tuple.data, 0);
-            String edgelabel = Convert.getStrValue(0, edge.data, 10);
-
-            NID source = new NID();
-            source.pageNo.pid = Convert.getIntValue(10, edge.data);
-            source.slotNo=Convert.getIntValue(14, edge.data);
-            
-            NID destination = new NID();
-            destination.pageNo.pid = Convert.getIntValue(18, edge.data);
-            destination.slotNo=Convert.getIntValue(22, edge.data);
-            
-            int weight=Convert.getIntValue(26, edge.data);
-            
-            edge.setLabel(edgelabel);
-            edge.setSource(source);
-            edge.setDestination(destination);
-            edge.setWeight(weight);
-            
             return edge;
         }
         else

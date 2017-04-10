@@ -44,7 +44,7 @@ public class NScan extends Scan {
      * @throws IOException               I/O errors
      */
     public Node getNext(NID nid)
-            throws InvalidTupleSizeException,
+            throws InvalidTupleSizeException, InvalidTypeException,
             IOException, FieldNumberOutOfBoundException {
         RID record = new RID(nid.pageNo, nid.slotNo);
         Tuple tuple = super.getNext(record);
@@ -52,10 +52,6 @@ public class NScan extends Scan {
         nid.slotNo = record.slotNo;
         if (tuple != null) {
             Node newNode = new Node(tuple.data, 0);
-            Descriptor descriptor = Convert.getDescValue(10, tuple.data);
-            String label = Convert.getStrValue(0, tuple.data, 10);
-            newNode.setDesc(descriptor);
-            newNode.setLabel(label);
             return newNode;
         } else
             return null;

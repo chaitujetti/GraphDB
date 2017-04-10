@@ -45,7 +45,7 @@ public class batchnodedelete implements GlobalConst{
                     delnid.copyRid(start_nid);
                 }
             }
-
+            
             EScan edgescan = systemdef.JavabaseDB.getEhf().openScan();
             EID start_eid = new EID();
             EID deleid = new EID();

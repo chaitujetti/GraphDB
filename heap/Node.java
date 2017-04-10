@@ -11,31 +11,42 @@ import global.*;
 public class Node extends Tuple
 {
     private String label;
-    private Descriptor attrDesc;
-    public Node()
+    private Descriptor desc;
+
+    public static final AttrType[] types = {new AttrType(AttrType.attrString),new AttrType(AttrType.attrDesc)};
+    public static final short[] sizes = {LABEL_MAX_LENGTH,10};
+    public static final short numFld = 2;
+
+    public Node() throws IOException, InvalidTypeException, InvalidTupleSizeException
     {
         super();
+        setHdr(numFld, types, sizes);
     }
 
-    public Node(Tuple tuple) throws IOException {
-        this.data = tuple.data;
-        this.attrDesc = Convert.getDescValue(10,tuple.data);
-        this.label = Convert.getStrValue(0,tuple.data,10);
-    }
-
-    public Node(Node fromNode)
+    public Node(Tuple tuple) throws IOException, InvalidTypeException, InvalidTupleSizeException
     {
-        super(fromNode);
-        this.attrDesc = fromNode.attrDesc;
-        this.label = fromNode.label;
+        this.data = tuple.data;
+        setHdr(numFld, types, sizes);
     }
 
-    public Node(byte [] atuple, int offset){super(atuple,offset,atuple.length);}
-    public Node(byte [] atuple, int offset, int length)
+    public Node(Node node)
+    {
+        super(node);
+        this.desc = node.desc;
+        this.label = node.label;
+    }
+
+    public Node(byte [] atuple, int offset) throws IOException, InvalidTypeException, InvalidTupleSizeException
+    {
+        super(atuple,offset,atuple.length);
+        setHdr(numFld, types, sizes);
+    }
+
+    public Node(byte [] atuple, int offset, int length) throws IOException, InvalidTypeException, InvalidTupleSizeException
     {
         super(atuple,offset,length);
+        setHdr(numFld, types, sizes);
     }
-
 
     public byte [] getNodeByteArray()
     {
@@ -44,64 +55,55 @@ public class Node extends Tuple
 
     public short[] copyFldOffset() {
 
-        return super.copyFldOffset();
+        return copyFldOffset();
     }
 
     public String getLabel() throws IOException, FieldNumberOutOfBoundException
     {
-        //String sval = Convert.getStrValue(fldOffset[0], data,fldOffset[1] - fldOffset[0]);
-        //return sval;
-        return this.label;
+        return getStrFld(1);
     }
 
     public Descriptor getDesc() throws IOException, FieldNumberOutOfBoundException
     {
-        return this.attrDesc;
+        return getDescFld(2);
     }
 
     public Node setLabel(String label) throws IOException, FieldNumberOutOfBoundException
     {
         this.label = label;
-        Convert.setStrValue(this.label,0,data);
-        tuple_length = getLength();
+        setStrFld(1, this.label);
         return this;
     }
 
     public Node setDesc(Descriptor desc) throws IOException, FieldNumberOutOfBoundException
     {
-        this.attrDesc = desc;
-        Convert.setDescValue(this.attrDesc,10,data);
-        tuple_length = getLength();
+        this.desc = desc;
+        setDescFld(2, this.desc);
         return this;
     }
-    public int getLength() {
-        return 20;
-    }
 
+    private int getNodeLength() {
+        return getLength();
+    }
+    
     public void print() throws IOException, FieldNumberOutOfBoundException
     {
-        System.out.print("[Label: "+ this.label);
-        System.out.print(", Descriptors: "+ this.attrDesc.get(0) + ", " + this.attrDesc.get(1) + ", " + this.attrDesc.get(2) + ", " + this.attrDesc.get(3) + ", " + this.attrDesc.get(4) +"]\n"); //Make Descriptor get function public
+        System.out.println("[Label: "+ this.label + ", Descriptors: "+ this.desc.get(0) + ", " + this.desc.get(1) + ", " + this.desc.get(2) + ", " + this.desc.get(3) + ", " + this.desc.get(4) +"]");
     }
 
-    public short size()
+    public void nodeCopy(Node node)
     {
-        return super.size();
-    }
-
-    public void nodeCopy(Node fromNode)
-    {
-        byte [] temparray = fromNode.getTupleByteArray();
-        System.arraycopy(temparray, 0,data, super.getTupleOffset(),super.getTupleLength());
+        byte [] temp = node.getTupleByteArray();
+        System.arraycopy(temp, 0, data, getOffset(), getLength());
     }
 
     public void nodeInit(byte [] anode, int offset)
     {
-        super.tupleInit(anode,offset,anode.length);
+        tupleInit(anode,offset,anode.length);
     }
 
     public void nodeSet(byte [] fromnode, int offset)
     {
-        super.tupleSet(fromnode,offset,fromnode.length);
+        tupleSet(fromnode,offset,fromnode.length);
     }
 }

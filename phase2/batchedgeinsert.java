@@ -29,13 +29,7 @@ public class batchedgeinsert implements GlobalConst
             DiskMgrException,
             FieldNumberOutOfBoundException,
             HFException, HFBufMgrException, HFDiskMgrException, InvalidSlotNumberException, SpaceNotAvailableException, InvalidTupleSizeException,Exception {
-        int[] res = new int[]{0,0,0,0,0};
-//        GraphDB phase2 = new GraphDB();
-//        phase2.openDB(dbname,1000);
-
-//        SystemDefs systemdef=new SystemDefs(dbname,1000,256,"Clock");
-//        systemdef.JavabaseDB.createIndexFiles(dbname);
-
+        
         int counter = 0;
         List<String> content = new ArrayList<>();
         System.out.println(filename);
@@ -79,7 +73,7 @@ public class batchedgeinsert implements GlobalConst
                 System.out.println("Destination Node not present");
 
             EID eid = new EID();
-
+            
             iter.setSource(source_nid);
             iter.setDestination(dest_nid);
             iter.setLabel(temp[2]);
@@ -91,32 +85,16 @@ public class batchedgeinsert implements GlobalConst
             counter++;
         }
 
-        // get the node count
-        res[0] = systemdef.JavabaseDB.getNodeCnt();
-
-        // get the edge count
-        res[1] = systemdef.JavabaseDB.getEdgeCnt();
-
-        // get the pages read count
-        res[2] = systemdef.JavabaseDB.getNoOfReads();
-        // PCounter.getRcounter();
-
-        //get the pages write count
-        res[3] = systemdef.JavabaseDB.getNoOfWrites();
-
-        //get node labels count
-        res[4]=systemdef.JavabaseDB.getLabelCnt();
-
-
-        System.out.println("Node count = "+ res[0]);
-        System.out.println("Edge count = "+ res[1]);
-        System.out.println("Disk pages read ="+ res[2]);
-        System.out.println("Disk pages written ="+ res[3]);
-        System.out.println("Unique labels in the file ="+ res[4]);
+        System.out.println("Node count = "+ systemdef.JavabaseDB.getNodeCnt());
+        System.out.println("Edge count = "+ systemdef.JavabaseDB.getEdgeCnt());
+        System.out.println("Disk pages read ="+ systemdef.JavabaseDB.getNoOfReads());
+        System.out.println("Disk pages written ="+ systemdef.JavabaseDB.getNoOfWrites());
+        System.out.println("Unique labels in the file ="+ systemdef.JavabaseDB.getLabelCnt());
 
         if(counter == content.size())
             return true;
-        else return false;
+        else 
+            return false;
     }
 }
 

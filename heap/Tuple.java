@@ -9,7 +9,8 @@ import global.*;
 
 public class Tuple implements GlobalConst{
 
-
+    public static final String LABEL_CONSTANT = "0";
+    public static final int LABEL_MAX_LENGTH = 10;
     /**
      * Maximum size of any tuple
      */
@@ -482,6 +483,9 @@ public class Tuple implements GlobalConst{
                     incr = (short) (strSizes[strCount] +2);  //strlen in bytes = strlen +2
                     strCount++;
                     break;
+                case AttrType.attrDesc:
+                    incr = 10;
+                    break;
 
                 default:
                     throw new InvalidTypeException (null, "TUPLE: TUPLE_TYPE_ERROR");
@@ -503,6 +507,9 @@ public class Tuple implements GlobalConst{
 
             case AttrType.attrString:
                 incr =(short) ( strSizes[strCount] +2);  //strlen in bytes = strlen +2
+                break;
+            case AttrType.attrDesc:
+                incr = 10;
                 break;
 
             default:
@@ -559,6 +566,7 @@ public class Tuple implements GlobalConst{
         int i, val;
         float fval;
         String sval;
+        Descriptor dVal;
 
         System.out.print("[");
         for (i=0; i< fldCnt-1; i++)
@@ -583,6 +591,11 @@ public class Tuple implements GlobalConst{
                 case AttrType.attrNull:
                 case AttrType.attrSymbol:
                     break;
+                case AttrType.attrDesc:
+                    dVal = Convert.getDescValue(fldOffset[i], data);
+                    System.out.print(dVal);
+                    break;
+
             }
             System.out.print(", ");
         }
@@ -607,6 +620,12 @@ public class Tuple implements GlobalConst{
             case AttrType.attrNull:
             case AttrType.attrSymbol:
                 break;
+
+            case AttrType.attrDesc:
+                dVal = Convert.getDescValue(fldOffset[i], data);
+                System.out.print(dVal);
+                break;
+
         }
         System.out.println("]");
 

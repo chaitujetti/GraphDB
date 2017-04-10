@@ -46,10 +46,9 @@ public class batchedgedelete implements GlobalConst{
     
             while (!deledge) {
                 current_edge = edgescan.getNext(start_eid);
-                if(edgeLabel == "7_473"){
-                    System.out.println(current_edge.getLabel());
+                if(current_edge==null){
+                    break;
                 }
-                // System.out.println(current_edge.getLabel());
                 if (current_edge.getLabel().equals(edgeLabel)) {
                     deledge = true;
                     deleid.copyRid(start_eid);

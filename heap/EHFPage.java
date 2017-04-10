@@ -40,20 +40,9 @@ public class EHFPage extends HFPage {
      * @param  page  the given page in Page type
      */
 
-    public EHFPage(Page page)
+    public EHFPage(EHFPage page)
     {
         data = page.getpage();
-    }
-
-    /**
-     * Constructor of class EHFPage
-     * open a existed EHFpage
-     * @param  apage   a page in buffer pool
-     */
-
-    public void openEHFpage(Page apage)
-    {
-        data = apage.getpage();
     }
 
     /**
@@ -270,8 +259,7 @@ public class EHFPage extends HFPage {
      * @see 	Tuple
      */
     public Edge getEdge ( EID eid )
-            throws IOException,
-            InvalidSlotNumberException
+            throws IOException, InvalidSlotNumberException, InvalidTypeException, InvalidTupleSizeException
     {
         short recLen;
         short offset;
@@ -312,8 +300,7 @@ public class EHFPage extends HFPage {
      * @see 	Tuple
      */
     public Node returnEdge ( EID eid )
-            throws IOException,
-            InvalidSlotNumberException
+            throws IOException, InvalidSlotNumberException, InvalidTypeException, InvalidTupleSizeException
     {
         short recLen;
         short offset;
