@@ -121,10 +121,10 @@ public class IndexNestedLoopsJoins extends Iterator
                     return null;
                 }
                 if(joinType==3) {
-                    innerRelScan = innerBTreeFile.new_scan(new StringKey(outerEdge.getSourceNodeLabel()), new StringKey(outerEdge.getSourceNodeLabel()));
+                    innerRelScan = innerBTreeFile.new_scan(new StringKey(outerEdge.getSourceLabel()), new StringKey(outerEdge.getSourceLabel()));
                 }
                 if(joinType==4) {
-                    innerRelScan = innerBTreeFile.new_scan(new StringKey(outerEdge.getDestinationNodeLabel()), new StringKey(outerEdge.getDestinationNodeLabel()));
+                    innerRelScan = innerBTreeFile.new_scan(new StringKey(outerEdge.getDestinationLabel()), new StringKey(outerEdge.getDestinationLabel()));
                 }
                 entry= innerRelScan.get_next();
             }
