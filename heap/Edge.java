@@ -143,20 +143,6 @@ public class Edge extends Tuple {
         return this;
     }
 
-    public Edge setSourceNodeLabel(String sourceNodeLabel) throws IOException {
-        this.sourceLabel = sourceNodeLabel;
-        Convert.setStrValue(this.sourceLabel, 30, data);
-        tuple_length = getEdgeLength();
-        return this;
-    }
-
-    public Edge setDestinationNodeLabel(String destinationNodeLabel) throws IOException {
-        this.destinationLabel = destinationNodeLabel;
-        Convert.setStrValue(this.destinationLabel, 40, data);
-        tuple_length = getEdgeLength();
-        return this;
-    }
-
     public void print() throws IOException
     {
         System.out.print("[");

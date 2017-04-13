@@ -48,7 +48,7 @@ public class GraphDB extends DB
     public BTreeFile edgeLabels_BFile;
     public BTreeFile edgeSourceLabels_BFile;
     public BTreeFile edgeDestinationLabels_BFile;
-    // public BTreeFile edgeWeights_BFile;
+    public BTreeFile edgeWeights_BFile;
     
     public static int Graphcounter;
     public int GraphID;
@@ -88,7 +88,7 @@ public class GraphDB extends DB
         edgeLabels_BFile=new BTreeFile("EdgeLabelsBtree_"+DBname,AttrType.attrString,100,1);
         edgeSourceLabels_BFile=new BTreeFile("EdgeSourceLabelsBtree_"+DBname,AttrType.attrString,100,1);
         edgeDestinationLabels_BFile=new BTreeFile("EdgeDestinationLabelsBtree_"+DBname,AttrType.attrString,100,1);
-        // edgeWeights_BFile=new BTreeFile("EdgeWeights_BFile_"+DBname,AttrType.attrString,100,1);
+        edgeWeights_BFile=new BTreeFile("EdgeWeights_BFile_"+DBname,AttrType.attrInteger,100,1);
     }
 
     public int getNoOfReads()
@@ -261,6 +261,7 @@ public class GraphDB extends DB
         edgeDestinationLabels_BFile.insert(new StringKey(destinationLabel),eid/*edge.getDestination()*/);
         int weights=edge.getWeight();
         // edgeWeights_BFile.insert(new StringKey(Integer.toString(weights)), eid);
+        // edgeWeights_BFile.insert(new IntegerKey(weights), eid);
         updateEdgeNodeLabels(edge.getSource(),hashSourceNodesPresent,0);//Insert Source Node
         updateEdgeNodeLabels(edge.getDestination(),hashDestinationNodesPresent,0);//Insert Destination Node
     }
@@ -288,6 +289,7 @@ public class GraphDB extends DB
         // System.out.println(eid.slotNo);
         // System.out.println(eid.pageNo);
         // edgeWeights_BFile.Delete(new StringKey(Integer.toString(weights)), eid);
+        // edgeWeights_BFile.Delete(new IntegerKey(weights), eid);
         // System.out.println("Here9");
         updateEdgeNodeLabels(edge.getSource(),hashSourceNodesPresent,1);//Delete Source Node
         // System.out.println("Here Again1");

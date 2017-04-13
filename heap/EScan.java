@@ -53,13 +53,10 @@ public class EScan extends Scan{
         Tuple tuple = super.getNext(rid);
         eid.pageNo.pid=rid.pageNo.pid;
         eid.slotNo=rid.slotNo;
-        
         if(tuple!=null){
             Edge edge = new Edge(tuple.data, 0);
             return edge;
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
