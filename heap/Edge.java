@@ -144,15 +144,15 @@ public class Edge extends Tuple {
     }
 
     public Edge setSourceNodeLabel(String sourceNodeLabel) throws IOException {
-        this.sourceNodeLabel = sourceNodeLabel;
-        Convert.setStrValue(this.sourceNodeLabel, 30, data);
+        this.sourceLabel = sourceNodeLabel;
+        Convert.setStrValue(this.sourceLabel, 30, data);
         tuple_length = getEdgeLength();
         return this;
     }
 
     public Edge setDestinationNodeLabel(String destinationNodeLabel) throws IOException {
-        this.destinationNodeLabel = destinationNodeLabel;
-        Convert.setStrValue(this.destinationNodeLabel, 40, data);
+        this.destinationLabel = destinationNodeLabel;
+        Convert.setStrValue(this.destinationLabel, 40, data);
         tuple_length = getEdgeLength();
         return this;
     }
