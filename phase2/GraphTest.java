@@ -11,6 +11,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileFilter;
 
 /**
  * Created by joelmascarenhas on 3/11/17.
@@ -30,6 +32,16 @@ class GraphDriver {
         System.out.print("Hi, make your choice :");
     }
 
+    private int dbExists(String dbFile){
+        File[] fileList = new File(".").listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.getName().equalsIgnoreCase(dbFile);
+            }
+        });
+        return fileList.length;
+    }
+
     public void runTests() throws Exception {
         int choice = -1;
         Scanner scanner = new Scanner(System.in);
@@ -42,107 +54,169 @@ class GraphDriver {
             menu();
 
             //try {
-                choice = GetStuff.getChoice();
-                String inp;
-                String[] varargs;
-                switch (choice) {
-                    case 1:
-                        //Task 2.10 Batch Node Insert
-                        System.out.print(" Enter NODEFILENAME GRAPHDBNAME :-");
-                        inp = scanner.nextLine();
-                        varargs = inp.split(" ");
-                        if(dbcreated!=true)
-                        {
-                            systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
-                            systemdef.JavabaseDB.createIndexFiles(varargs[1]);
-                            dbcreated=true;
-                        }
-                        status = batchnodeinsert.nodeinsert(varargs[0],varargs[1],systemdef);
-                        if(status == true )
-                            System.out.println("Batch Node Insert successful");
-                        else
-                            System.out.println("Batch Node Insert failed");
-                        break;
-                    case 2:
-                        //Task 2.11 Batch Edge Insert
-                        System.out.print(" Enter EDGEFILENAME GRAPHDBNAME :-");
-                        inp = scanner.nextLine();
-                        varargs = inp.split(" ");
-                        if(dbcreated!=true)
-                        {
-                            systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
-                            systemdef.JavabaseDB.createIndexFiles(varargs[1]);
-                            dbcreated=true;
-                        }
-                        status = batchedgeinsert.edgeinsert(varargs[0],varargs[1],systemdef);
-                        if(status == true )
-                            System.out.println("Batch Edge Insert successful");
-                        else
-                            System.out.println("Batch Edge Insert failed");
-                        break;
-                    case 3:
-                        //Task 2.12 Batch Node Delete
-                        System.out.print(" Enter NODEFILENAME GRAPHDBNAME :-");
-                        inp = scanner.nextLine();
-                        varargs = inp.split(" ");
-                        if(dbcreated!=true)
-                        {
-                            systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
-                            systemdef.JavabaseDB.createIndexFiles(varargs[1]);
-                            dbcreated=true;
-                        }
-                        status = batchnodedelete.nodedelete(varargs[0],varargs[1],systemdef);
-                        if(status == true )
-                            System.out.println("Batch Node Delete successful");
-                        else
-                            System.out.println("Batch Node Delete failed");
-                        break;
-                    case 4:
-                        //Task 2.13 Batch Edge Delete
-                        System.out.print(" Enter NODEFILENAME GRAPHDBNAME :-");
-                        inp = scanner.nextLine();
-                        varargs = inp.split(" ");
-                        status = batchedgedelete.edgedelete(varargs[0],varargs[1],systemdef);
-                        if(dbcreated!=true)
-                        {
-                            systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
-                            systemdef.JavabaseDB.createIndexFiles(varargs[1]);
-                            dbcreated=true;
-                        }
-                        if(status == true )
-                            System.out.println("Batch Edge Delete successful");
-                        else
-                            System.out.println("Batch Edge Delete failed");
-                        break;
-                    case 5:
-                        //Task 2.14 Simple Node Query
-                        System.out.print(" Enter GRAPHDBNAME NUMBUF QTYPE INDEX [QUERYOPTIONS] :-");
-                        System.out.println(" If QTYPE = 0, [QUERYOPTIONS] = null :-");
-                        System.out.println(" If QTYPE = 1, [QUERYOPTIONS] = null :-");
-                        System.out.println(" If QTYPE = 2, [QUERYOPTIONS] = null :-");
-                        System.out.println(" If QTYPE = 3, [QUERYOPTIONS] = TARGET_DESCRIPTOR DISTANCE :-");
-                        System.out.println(" If QTYPE = 4, [QUERYOPTIONS] = LABEL :-");
-                        System.out.println(" If QTYPE = 5, [QUERYOPTIONS] = TARGET_DESCRIPTOR DISTANCE :-");
-                        inp = scanner.nextLine();
-                        varargs = inp.split(" ");
-                        if(dbcreated!=true)
-                        {
-                            systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
-                            systemdef.JavabaseDB.createIndexFiles(varargs[1]);
-                            dbcreated=true;
-                        }
-                        // if(Integer.parseInt(varargs[2])==0)
-                        // {
-                        //     Task14.executeQueryTypeZero(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        // }
-                        // if(Integer.parseInt(varargs[2])==1)
-                        // {
-                        //     Task14.executeQueryTypeOne(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        // }
-                        // if(Integer.parseInt(varargs[2])==4)
-                        // {
-                        //     Task14.executeQueryTypeFour(Integer.parseInt(varargs[3]),varargs[0],varargs[4],systemdef);
-                        // }
+            choice = GetStuff.getChoice();
+            String inp;
+            String[] varargs;
+            switch (choice) {
+                case 1:
+
+                    //Task 2.10 Batch Node Insert
+                    System.out.print(" Enter NODEFILENAME GRAPHDBNAME :-");
+                    inp = scanner.nextLine();
+                    varargs = inp.split(" ");
+
+                    if (dbExists(varargs[1]) ==1){
+                        dbcreated=true;//check if DB file already exists
+                    }
+                    else dbcreated=false;
+                    if(dbcreated!=true)//db doesnt exist
+                    {
+                        systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
+                        systemdef.JavabaseDB.createIndexFiles(varargs[1]);
+                        //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                        //System.out.println(systemdef.JavabaseDB.db_name());
+                        //dbcreated=true;
+                    }
+                    else if (dbcreated==true && (systemdef==null)) {//db file exists,minibase restarted
+                        SystemDefs.MINIBASE_RESTART_FLAG=true;
+                        systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
+                        //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                        //System.out.println(systemdef.JavabaseDB.db_name());
+                        systemdef.JavabaseDB.createIndexFiles(varargs[1]);
+                    }
+                    status = batchnodeinsert.nodeinsert(varargs[0],varargs[1],systemdef);
+                    systemdef.JavabaseBM.flushAllPages();
+
+                    if(status == true ) {
+                        System.out.println("Batch Node Insert successful");
+                        systemdef.JavabaseDB.closeDB();
+                    }
+                    else
+                        System.out.println("Batch Node Insert failed");
+                    break;
+                case 2:
+                    //Task 2.11 Batch Edge Insert
+                    System.out.print(" Enter EDGEFILENAME GRAPHDBNAME :-");
+                    inp = scanner.nextLine();
+                    varargs = inp.split(" ");
+                    if (dbExists(varargs[1]) ==1){
+                        dbcreated=true;//check if DB file already exists
+                    }
+                    else dbcreated=false;
+                    if(dbcreated!=true)//db doesnt exist
+                    {
+                        systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
+                        systemdef.JavabaseDB.createIndexFiles(varargs[1]);
+                        //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                        //System.out.println(systemdef.JavabaseDB.db_name());
+                        //dbcreated=true;
+                    }
+                    else if (dbcreated==true && (systemdef==null)) {//db file exists,minibase restarted
+                        SystemDefs.MINIBASE_RESTART_FLAG=true;
+                        systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
+                        //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                        //System.out.println(systemdef.JavabaseDB.db_name());
+                        systemdef.JavabaseDB.createIndexFiles(varargs[1]);
+                    }
+                    status = batchedgeinsert.edgeinsert(varargs[0],varargs[1],systemdef);
+                    systemdef.JavabaseBM.flushAllPages();
+                    if(status == true )
+                        System.out.println("Batch Edge Insert successful");
+                    else
+                        System.out.println("Batch Edge Insert failed");
+                    break;
+                case 3:
+                    //Task 2.12 Batch Node Delete
+                    System.out.print(" Enter NODEFILENAME GRAPHDBNAME :-");
+                    inp = scanner.nextLine();
+                    varargs = inp.split(" ");
+                    if (dbExists(varargs[1]) ==1){
+                        dbcreated=true;//check if DB file already exists
+                    }
+                    else dbcreated=false;
+                    if(dbcreated!=true)//db doesnt exist
+                    {
+                        systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
+                        systemdef.JavabaseDB.createIndexFiles(varargs[1]);
+                        //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                        //System.out.println(systemdef.JavabaseDB.db_name());
+                        //dbcreated=true;
+                    }
+                    else if (dbcreated==true && (systemdef==null)) {//db file exists,minibase restarted
+                        SystemDefs.MINIBASE_RESTART_FLAG=true;
+                        systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
+                        //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                        //System.out.println(systemdef.JavabaseDB.db_name());
+                        systemdef.JavabaseDB.createIndexFiles(varargs[1]);
+                    }
+                    status = batchnodedelete.nodedelete(varargs[0],varargs[1],systemdef);
+                    systemdef.JavabaseBM.flushAllPages();
+                    if(status == true )
+                        System.out.println("Batch Node Delete successful");
+                    else
+                        System.out.println("Batch Node Delete failed");
+                    break;
+                case 4:
+                    //Task 2.13 Batch Edge Delete
+                    System.out.print(" Enter NODEFILENAME GRAPHDBNAME :-");
+                    inp = scanner.nextLine();
+                    varargs = inp.split(" ");
+                    if (dbExists(varargs[1]) ==1){
+                        dbcreated=true;//check if DB file already exists
+                    }
+                    else dbcreated=false;
+
+                    if(dbcreated!=true)//db doesnt exist
+                    {
+                        systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
+                        systemdef.JavabaseDB.createIndexFiles(varargs[1]);
+                        //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                        //System.out.println(systemdef.JavabaseDB.db_name());
+                        //dbcreated=true;
+                    }
+                    else if (dbcreated==true && (systemdef==null)) {//db file exists,minibase restarted
+                        SystemDefs.MINIBASE_RESTART_FLAG=true;
+                        systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
+                        //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                        //System.out.println(systemdef.JavabaseDB.db_name());
+                        systemdef.JavabaseDB.createIndexFiles(varargs[1]);
+                    }
+                    status = batchedgedelete.edgedelete(varargs[0],varargs[1],systemdef);
+                    systemdef.JavabaseBM.flushAllPages();
+                    if(status == true )
+                        System.out.println("Batch Edge Delete successful");
+                    else
+                        System.out.println("Batch Edge Delete failed");
+                    break;
+                case 5:
+                    //Task 2.14 Simple Node Query
+                    System.out.print(" Enter GRAPHDBNAME NUMBUF QTYPE INDEX [QUERYOPTIONS] :-");
+                    System.out.println(" If QTYPE = 0, [QUERYOPTIONS] = null :-");
+                    System.out.println(" If QTYPE = 1, [QUERYOPTIONS] = null :-");
+                    System.out.println(" If QTYPE = 2, [QUERYOPTIONS] = null :-");
+                    System.out.println(" If QTYPE = 3, [QUERYOPTIONS] = TARGET_DESCRIPTOR DISTANCE :-");
+                    System.out.println(" If QTYPE = 4, [QUERYOPTIONS] = LABEL :-");
+                    System.out.println(" If QTYPE = 5, [QUERYOPTIONS] = TARGET_DESCRIPTOR DISTANCE :-");
+                    inp = scanner.nextLine();
+                    varargs = inp.split(" ");
+                    if(dbcreated!=true)
+                    {
+                        systemdef=new SystemDefs(varargs[1],1000,256,"Clock");
+                        systemdef.JavabaseDB.createIndexFiles(varargs[1]);
+                        dbcreated=true;
+                    }
+                    // if(Integer.parseInt(varargs[2])==0)
+                    // {
+                    //     Task14.executeQueryTypeZero(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                    // }
+                    // if(Integer.parseInt(varargs[2])==1)
+                    // {
+                    //     Task14.executeQueryTypeOne(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                    // }
+                    // if(Integer.parseInt(varargs[2])==4)
+                    // {
+                    //     Task14.executeQueryTypeFour(Integer.parseInt(varargs[3]),varargs[0],varargs[4],systemdef);
+                    // }
 
 //                        if(varargs.length == 4)
 //                            res = nodequery.computequery(varargs[0],varargs[1],varargs[2],varargs[3]);
@@ -151,64 +225,66 @@ class GraphDriver {
 //                        else if(varargs.length == 6)
 //                            res = nodequery.computequery(varargs[0],varargs[1],varargs[2],varargs[3],varargs[4],varargs[5]);
 //                        System.out.println("Disk pages read ="+ res[0]);
-                        //System.out.println("Disk pages written ="+ res[1]);
-                        break;
-                    case 6:
-                        //Task 2.14 Simple Edge Query
-                        System.out.print(" Enter GRAPHDBNAME NUMBUF QTYPE INDEX [QUERYOPTIONS] :-");
-                        System.out.println(" If QTYPE = 0, [QUERYOPTIONS] = null :-");
-                        System.out.println(" If QTYPE = 1, [QUERYOPTIONS] = null :-");
-                        System.out.println(" If QTYPE = 2, [QUERYOPTIONS] = null :-");
-                        System.out.println(" If QTYPE = 3, [QUERYOPTIONS] = null :-");
-                        System.out.println(" If QTYPE = 4, [QUERYOPTIONS] = null :-");
-                        System.out.println(" If QTYPE = 5, [QUERYOPTIONS] = LOWER_WEIGHT_BOUND UPPER_WEIGHT_BOUND :-");
-                        System.out.println(" If QTYPE = 6, [QUERYOPTIONS] = null :-");
-                        inp = scanner.nextLine();
-                        varargs = inp.split(" ");
-                        if(dbcreated!=true)
-                        {
-                            systemdef=new SystemDefs(varargs[0],1000,256,"Clock");
-                            systemdef.JavabaseDB.createIndexFiles(varargs[1]);
-                            dbcreated=true;
-                        }
-                        // if(Integer.parseInt(varargs[2])==0)
-                        // {
-                        //     task15_0.executeQueryTypeZero(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        // }
-                        // if(Integer.parseInt(varargs[2])==1)
-                        // {
-                        //     task15_0.executeQueryTypeOne(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        // }
-                        // if(Integer.parseInt(varargs[2])==2)
-                        // {
-                        //     task15_0.executeQueryTypeTwo(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        // }
-                        // if(Integer.parseInt(varargs[2])==3)
-                        // {
-                        //     task15_0.executeQueryTypeThree(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        // }
-                        // if(Integer.parseInt(varargs[2])==4)
-                        // {
-                        //     task15_0.executeQueryTypeFour(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        // }
-                        // if(Integer.parseInt(varargs[2])==5)
-                        // {
-                        //     task15_0.executeQueryTypeFive(Integer.parseInt(varargs[3]),varargs[0],Integer.parseInt(varargs[4]),Integer.parseInt(varargs[5]),systemdef);
-                        // }
-                        // if(Integer.parseInt(varargs[2])==6)
-                        // {
-                        //     task15_0.executeQueryTypeSix(Integer.parseInt(varargs[3]),varargs[0],systemdef);
-                        // }
+                    //System.out.println("Disk pages written ="+ res[1]);
+                    break;
+                case 6:
+                    //Task 2.14 Simple Edge Query
+                    System.out.print(" Enter GRAPHDBNAME NUMBUF QTYPE INDEX [QUERYOPTIONS] :-");
+                    System.out.println(" If QTYPE = 0, [QUERYOPTIONS] = null :-");
+                    System.out.println(" If QTYPE = 1, [QUERYOPTIONS] = null :-");
+                    System.out.println(" If QTYPE = 2, [QUERYOPTIONS] = null :-");
+                    System.out.println(" If QTYPE = 3, [QUERYOPTIONS] = null :-");
+                    System.out.println(" If QTYPE = 4, [QUERYOPTIONS] = null :-");
+                    System.out.println(" If QTYPE = 5, [QUERYOPTIONS] = LOWER_WEIGHT_BOUND UPPER_WEIGHT_BOUND :-");
+                    System.out.println(" If QTYPE = 6, [QUERYOPTIONS] = null :-");
+                    inp = scanner.nextLine();
+                    varargs = inp.split(" ");
+                    if(dbcreated!=true)
+                    {
+                        systemdef=new SystemDefs(varargs[0],1000,256,"Clock");
+                        systemdef.JavabaseDB.createIndexFiles(varargs[1]);
+                        dbcreated=true;
+                    }
+                    // if(Integer.parseInt(varargs[2])==0)
+                    // {
+                    //     task15_0.executeQueryTypeZero(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                    // }
+                    // if(Integer.parseInt(varargs[2])==1)
+                    // {
+                    //     task15_0.executeQueryTypeOne(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                    // }
+                    // if(Integer.parseInt(varargs[2])==2)
+                    // {
+                    //     task15_0.executeQueryTypeTwo(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                    // }
+                    // if(Integer.parseInt(varargs[2])==3)
+                    // {
+                    //     task15_0.executeQueryTypeThree(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                    // }
+                    // if(Integer.parseInt(varargs[2])==4)
+                    // {
+                    //     task15_0.executeQueryTypeFour(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                    // }
+                    // if(Integer.parseInt(varargs[2])==5)
+                    // {
+                    //     task15_0.executeQueryTypeFive(Integer.parseInt(varargs[3]),varargs[0],Integer.parseInt(varargs[4]),Integer.parseInt(varargs[5]),systemdef);
+                    // }
+                    // if(Integer.parseInt(varargs[2])==6)
+                    // {
+                    //     task15_0.executeQueryTypeSix(Integer.parseInt(varargs[3]),varargs[0],systemdef);
+                    // }
                         /*if(varargs.length == 4)
                             res = edgequery.computequery(varargs[0],varargs[1],varargs[2],varargs[3]);
                         else if(varargs.length == 5)
                             res = edgequery.computequery(varargs[0],varargs[1],varargs[2],varargs[3],varargs[4]);
                         System.out.println("Disk pages read = "+ res[0]);
                         System.out.println("Disk pages written = "+ res[1]);*/
-                        break;
-                    case 7:
-                        break;
-                }
+                    break;
+                case 7:
+                    //systemdef.JavabaseBM.flushAllPages();
+                    systemdef.JavabaseDB.closeDB();
+                    break;
+            }
 
             //}
             //catch(Exception e)
