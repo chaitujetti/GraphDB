@@ -29,7 +29,7 @@ public class IndexNestedLoopsJoins extends Iterator
 
     private BTreeFile innerBTreeFile;
 
-    private Scan outerRelScan;
+    //private Scan outerRelScan;
     private BTFileScan innerRelScan;
 
     private Node outerNode;
@@ -43,11 +43,11 @@ public class IndexNestedLoopsJoins extends Iterator
     private int joinType;
 
 
-    public IndexNestedLoopsJoins(int joinType, String outerRelHeapFile, String innerRelHeapFile, String innerRelIndexFile, CondExpr outerCondn[], CondExpr innerCondn[]) throws IOException, HFException, HFBufMgrException, HFDiskMgrException, ConstructPageException, GetFileEntryException, PinPageException, InvalidTupleSizeException {
+    public IndexNestedLoopsJoins(int joinType, String outerRelHeapFile, String innerRelHeapFile, String innerRelIndexFile, CondExpr outerCondn[], CondExpr innerCondn[], RID outerRID) throws Exception, IOException, HFException, HFBufMgrException, HFDiskMgrException, ConstructPageException, GetFileEntryException, PinPageException, InvalidTupleSizeException {
         this.joinType= joinType;
         this.outerCondn=outerCondn;
         this.innerCondn=innerCondn;
-        outerRID = new RID();
+        this.outerRID = outerRID;
         nodeAttrs= new AttrType[2];
         nodeAttrs[0]= new AttrType(AttrType.attrString);
         nodeAttrs[1]= new AttrType(AttrType.attrDesc);
@@ -65,11 +65,14 @@ public class IndexNestedLoopsJoins extends Iterator
         entry=null;
 
         if(joinType==1||joinType==2) {
-            outerNodeHF = new NodeHeapfile(outerRelHeapFile);
-            innerEdgeHF = new EdgeHeapfile(innerRelHeapFile);
-            innerBTreeFile = new BTreeFile(innerRelIndexFile);
+            outerNodeHF = new NodeHeapfile(outerRelHeapFile);   //Might have to change it
+            innerEdgeHF = new EdgeHeapfile(innerRelHeapFile);   // so as to directly get the heap/index file object
+            innerBTreeFile = new BTreeFile(innerRelIndexFile);  // instead of the filename
 
-            outerRelScan = outerNodeHF.openScan();
+            //outerRelScan = outerNodeHF.openScan();
+            outerNode = outerNodeHF.getNode((NID)outerRID);
+            innerRelScan = innerBTreeFile.new_scan(new StringKey(outerNode.getLabel()), new StringKey(outerNode.getLabel()));
+
         }
         else if(joinType==3||joinType==4)
         {
@@ -77,26 +80,31 @@ public class IndexNestedLoopsJoins extends Iterator
             innerNodeHF = new NodeHeapfile(innerRelHeapFile);
             innerBTreeFile = new BTreeFile(innerRelIndexFile);
 
-            outerRelScan = outerEdgeHF.openScan();
+            //outerRelScan = outerEdgeHF.openScan();
+            outerEdge = outerEdgeHF.getEdge((EID)outerRID);
+            if (joinType == 3) {
+                innerRelScan = innerBTreeFile.new_scan(new StringKey(outerEdge.getSourceLabel()), new StringKey(outerEdge.getSourceLabel()));
+            }
+            if (joinType == 4) {
+                innerRelScan = innerBTreeFile.new_scan(new StringKey(outerEdge.getDestinationLabel()), new StringKey(outerEdge.getDestinationLabel()));
+            }
         }
     }
 
-    public Tuple get_next() throws Exception {
-        if(joinType==1||joinType==2)
-        {
-            if(innerRelScan==null || entry==null ||(entry=innerRelScan.get_next())==null)
-            {
-                innerRelScan= null; //Just to make sure there is no Scan object if returned
-                outerNode=(Node)outerRelScan.getNext(outerRID);
-                if(outerNode==null) {
+    public Tuple get_next() throws Exception
+    {
+        return null;
+    }
+
+    public Tuple get_next(RID rid) throws Exception {
+        while((entry = innerRelScan.get_next()) == null) {
+            if (joinType == 1 || joinType == 2) {
+
+                if (outerNode == null) {
                     return null;
                 }
-                innerRelScan=innerBTreeFile.new_scan(new StringKey(outerNode.getLabel()),new StringKey(outerNode.getLabel()));
-                entry= innerRelScan.get_next();
-            }
-            if(entry!=null) {
                 LeafData leafNode = (LeafData) entry.data;
-                RID rid = leafNode.getData();
+                rid = leafNode.getData();
                 EID eid = new EID();
                 eid.pageNo.pid = rid.pageNo.pid;
                 eid.slotNo = rid.slotNo;
@@ -109,28 +117,14 @@ public class IndexNestedLoopsJoins extends Iterator
                         return innerEdge;
                     }
                 }
-            }
-        }
-        else if(joinType==3||joinType==4)
-        {
-            if(innerRelScan==null || entry==null|| (entry=innerRelScan.get_next())==null)
-            {
-                innerRelScan=null;
-                outerEdge=(Edge)outerRelScan.getNext(outerRID);
-                if(outerEdge==null) {
+
+            } else if (joinType == 3 || joinType == 4) {
+
+                if (outerEdge == null) {
                     return null;
                 }
-                if(joinType==3) {
-                    innerRelScan = innerBTreeFile.new_scan(new StringKey(outerEdge.getSourceLabel()), new StringKey(outerEdge.getSourceLabel()));
-                }
-                if(joinType==4) {
-                    innerRelScan = innerBTreeFile.new_scan(new StringKey(outerEdge.getDestinationLabel()), new StringKey(outerEdge.getDestinationLabel()));
-                }
-                entry= innerRelScan.get_next();
-            }
-            if(entry!=null) {
                 LeafData leafNode = (LeafData) entry.data;
-                RID rid = leafNode.getData();
+                rid = leafNode.getData();
                 NID nid = new NID();
                 nid.pageNo.pid = rid.pageNo.pid;
                 nid.slotNo = rid.slotNo;
@@ -143,6 +137,7 @@ public class IndexNestedLoopsJoins extends Iterator
                         return innerNode;
                     }
                 }
+
             }
         }
         return null;
@@ -154,7 +149,7 @@ public class IndexNestedLoopsJoins extends Iterator
         {
             try
             {
-                outerRelScan.closescan();
+                //outerRelScan.closescan();
             }
             catch (Exception e)
             {
