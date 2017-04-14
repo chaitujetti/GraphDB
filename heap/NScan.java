@@ -53,10 +53,10 @@ public class NScan extends Scan {
         if (tuple != null) {
             Node newNode = new Node(tuple.data, 0);
             return newNode;
-        } else
+        } else {
             return null;
+        }
     }
-
 
     /**
      * Position the scan cursor to the record with the given rid.

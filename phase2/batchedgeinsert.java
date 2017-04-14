@@ -32,7 +32,6 @@ public class batchedgeinsert implements GlobalConst
         
         int counter = 0;
         List<String> content = new ArrayList<>();
-        System.out.println(filename);
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String lineread;
             while ((lineread = br.readLine()) != null) {
@@ -45,43 +44,29 @@ public class batchedgeinsert implements GlobalConst
         {
             Edge iter = new Edge();
             NScan nodescan = systemdef.JavabaseDB.getNhf().openScan();
-            NID start_nid = new NID();
             NID dest_nid = new NID();
             NID source_nid = new NID();
             Node current_node;
-            boolean source_present = false;
-            boolean dest_present = false;
             String[] temp = content.get(i).split(" ");
 
-            while((!source_present) || (!dest_present))
-            {
-                current_node = nodescan.getNext(start_nid);
-                if(current_node.getLabel().equals(temp[0]))
-                {
-                    source_present = true;
-                    source_nid = new NID(new PageId(start_nid.pageNo.pid), start_nid.slotNo);
-                }
-                if(current_node.getLabel().equals(temp[1]))
-                {
-                    dest_present = true;
-                    dest_nid = new NID(new PageId(start_nid.pageNo.pid), start_nid.slotNo);
-                }
+            source_nid = getNID(temp[0], systemdef);
+            dest_nid = getNID(temp[1], systemdef);
+            if(source_nid == null){
+                System.out.println("Source Node does not exist");
+            } else if(dest_nid == null){
+                System.out.println("Destination Node does not exist");
+            } else if(checkEdgeExists(temp[0], temp[1], temp[2], systemdef)) {
+                System.out.println("Edge already exists: " + temp[2]);
+            } else {
+                iter.setSource(source_nid);
+                iter.setDestination(dest_nid);
+                iter.setSourceLabel(temp[0]);
+                iter.setDestinationLabel(temp[1]);
+                iter.setLabel(temp[2]);
+                iter.setWeight(Integer.parseInt(temp[3]));
+                systemdef.JavabaseDB.insertEdgeIntoGraphDB(iter.getTupleByteArray());
             }
-            if(source_present == false)
-                System.out.println("Source Node not present");
-            if(dest_present == false)
-                System.out.println("Destination Node not present");
-
-            EID eid = new EID();
             
-            iter.setSource(source_nid);
-            iter.setDestination(dest_nid);
-            iter.setLabel(temp[2]);
-            iter.setWeight(Integer.parseInt(temp[3]));
-            byte[] tempiter = iter.getTupleByteArray();
-            Edge ed=new Edge(tempiter,0);
-            systemdef.JavabaseDB.insertEdgeIntoGraphDB(ed.getTupleByteArray());
-            //eid = phase2.getEhf().insertEdge(tempiter);
             counter++;
         }
 
@@ -95,6 +80,52 @@ public class batchedgeinsert implements GlobalConst
             return true;
         else 
             return false;
+    }
+
+    public static NID getNID(String node, SystemDefs systemdef)
+        throws IOException, InvalidTupleSizeException, InvalidTypeException, FieldNumberOutOfBoundException
+    {
+        NScan nodescan = systemdef.JavabaseDB.getNhf().openScan();
+        NID start_nid = new NID();
+        NID nodeId = new NID();
+        Node current_node;
+        boolean existingNode = false;
+
+        while (!existingNode) {
+            current_node = nodescan.getNext(start_nid);
+            if(current_node==null){
+                break;
+            }
+            if (current_node.getLabel().equals(node)) {
+                existingNode = true;
+                nodeId = new NID(new PageId(start_nid.pageNo.pid), start_nid.slotNo);
+                nodescan.closescan();
+            }
+        }
+
+        return nodeId;
+    }
+
+    public static boolean checkEdgeExists(String source, String destination, String edgeLabel, SystemDefs systemdef)
+        throws IOException, InvalidTupleSizeException, InvalidTypeException, FieldNumberOutOfBoundException
+    {
+        EScan edgescan = systemdef.JavabaseDB.getEhf().openScan();
+        EID start_eid = new EID();
+        Edge current_edge = new Edge();
+        boolean existingEdge = false;
+
+        while (!existingEdge) {
+            current_edge = edgescan.getNext(start_eid);
+            if(current_edge == null){
+                break;
+            }
+            if (current_edge.getLabel().equals(edgeLabel) && current_edge.getSourceLabel().equals(source) && current_edge.getDestinationLabel().equals(destination)) {
+                existingEdge = true;
+                edgescan.closescan();
+            }
+        }
+
+        return existingEdge;
     }
 }
 

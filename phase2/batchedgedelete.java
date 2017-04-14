@@ -24,9 +24,7 @@ public class batchedgedelete implements GlobalConst{
 
     static boolean edgedelete(String filename, String dbname, SystemDefs systemdef)
             throws Exception {
-        int[] res = new int[]{0,0,0,0,0,0};
         int counter = 0;
-        System.out.println(filename);
         List<String> content = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String lineread;
@@ -54,30 +52,21 @@ public class batchedgedelete implements GlobalConst{
                     deleid.copyRid(start_eid);
                 }
             }
-            boolean stat = systemdef.JavabaseDB.deleteEdgeFromGraphDB(deleid);
+
+            if(deledge){
+                boolean stat = systemdef.JavabaseDB.deleteEdgeFromGraphDB(deleid);
+            } else {
+                System.out.println("No Existing Edge: " + temp[2]);
+            }
             counter++;
 
         }
-        // get the node count
-        res[0] = systemdef.JavabaseDB.getNodeCnt();
-
-        // get the edge count
-        res[1] = systemdef.JavabaseDB.getEdgeCnt();
-
-        // get the pages read count
-        res[2] = systemdef.JavabaseDB.getNoOfReads();
-        // PCounter.getRcounter();
-
-        //get the pages write count
-        res[3] = systemdef.JavabaseDB.getNoOfWrites();
-
-        res[5]=systemdef.JavabaseDB.getLabelCnt();
-
-        System.out.println("Node count = " + res[0]);
-        System.out.println("Edge count = " + res[1]);
-        System.out.println("Disk pages read =" + res[2]);
-        System.out.println("Disk pages written =" + res[3]);
-        System.out.println("Unique labels in the file ="+ res[4]);
+        
+        System.out.println("Node count = " + systemdef.JavabaseDB.getNodeCnt());
+        System.out.println("Edge count = " + systemdef.JavabaseDB.getEdgeCnt());
+        System.out.println("Disk pages read =" + systemdef.JavabaseDB.getNoOfReads());
+        System.out.println("Disk pages written =" + systemdef.JavabaseDB.getNoOfWrites());
+        System.out.println("Unique labels in the file =" + systemdef.JavabaseDB.getLabelCnt());
 
         if(counter == content.size())
             return true;
