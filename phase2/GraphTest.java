@@ -1,5 +1,6 @@
 package phase2;
 
+import bufmgr.PagePinnedException;
 import diskmgr.DiskMgrException;
 import diskmgr.FileIOException;
 import diskmgr.InvalidPageNumberException;
@@ -85,11 +86,12 @@ class GraphDriver {
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
                     }
                     status = batchnodeinsert.nodeinsert(varargs[0],varargs[1],systemdef);
-                    systemdef.JavabaseBM.flushAllPages();
+
 
                     if(status == true ) {
                         System.out.println("Batch Node Insert successful");
-                        systemdef.JavabaseDB.closeDB();
+
+                        //systemdef.JavabaseDB.closeDB();
                     }
                     else
                         System.out.println("Batch Node Insert failed");
@@ -119,7 +121,7 @@ class GraphDriver {
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
                     }
                     status = batchedgeinsert.edgeinsert(varargs[0],varargs[1],systemdef);
-                    systemdef.JavabaseBM.flushAllPages();
+
                     if(status == true )
                         System.out.println("Batch Edge Insert successful");
                     else
@@ -150,7 +152,7 @@ class GraphDriver {
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
                     }
                     status = batchnodedelete.nodedelete(varargs[0],varargs[1],systemdef);
-                    systemdef.JavabaseBM.flushAllPages();
+
                     if(status == true )
                         System.out.println("Batch Node Delete successful");
                     else
@@ -182,7 +184,7 @@ class GraphDriver {
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
                     }
                     status = batchedgedelete.edgedelete(varargs[0],varargs[1],systemdef);
-                    systemdef.JavabaseBM.flushAllPages();
+
                     if(status == true )
                         System.out.println("Batch Edge Delete successful");
                     else
@@ -281,7 +283,12 @@ class GraphDriver {
                         System.out.println("Disk pages written = "+ res[1]);*/
                     break;
                 case 7:
-                    //systemdef.JavabaseBM.flushAllPages();
+                    try {
+                        systemdef.JavabaseBM.flushAllPages();
+                    }
+                    catch(PagePinnedException e){
+                        continue;
+                    }
                     systemdef.JavabaseDB.closeDB();
                     break;
             }
