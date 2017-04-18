@@ -1,5 +1,6 @@
 package operator;
 
+import btree.BTreeFile;
 import heap.*;
 import iterator.*;
 import global.*;
@@ -13,16 +14,16 @@ public class PathExpressionOperator2
     private RID root;
     private int flag;
 
-    private String nodeHeapFile;
-    private String edgeHeapFile;
-    private String nodeIndexFile;
-    private String edgeSourceLabelIndexFile;
+    private NodeHeapfile nodeHeapFile;
+    private EdgeHeapfile edgeHeapFile;
+    private BTreeFile nodeIndexFile;
+    private BTreeFile edgeSourceLabelIndexFile;
 
     Heapfile outputFile;
 
     private int position;
 
-    public PathExpressionOperator2(EdgeRegEx[] edgeRegEx, RID firstNode, String nodeHeapFile, String edgeHeapFile, String nodeIndexFile, String edgeSourceLabelIndexFile, String outputHeapFileName) throws IOException, HFException, HFBufMgrException, HFDiskMgrException {
+    public PathExpressionOperator2(EdgeRegEx[] edgeRegEx, RID firstNode, NodeHeapfile nodeHeapFile, EdgeHeapfile edgeHeapFile, BTreeFile nodeIndexFile, BTreeFile edgeSourceLabelIndexFile, String outputHeapFileName) throws IOException, HFException, HFBufMgrException, HFDiskMgrException {
         this.edgeRegEx=edgeRegEx;
         root = new RID();
         root.pageNo.pid = firstNode.pageNo.pid;
@@ -101,7 +102,8 @@ public class PathExpressionOperator2
                     EID eid = new EID();
                     eid.pageNo.pid = innerRid.pageNo.pid;
                     eid.slotNo = innerRid.slotNo;
-                    DFS((RID)eid,2,pos);
+                    //DFS((RID)eid,2,pos);
+                    DFS(innerRid,2,pos);
                 }
                 else {
                     break;

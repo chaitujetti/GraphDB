@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileFilter;
+import query.*;
 
 /**
  * Created by joelmascarenhas on 3/11/17.
@@ -28,8 +29,8 @@ class GraphDriver {
         System.out.println("[4] Task 13 - Batch Edge Delete");
         System.out.println("[5] Task 14 - Simple Node Query");
         System.out.println("[6] Task 15 - Simple Edge Query");
-
-        System.out.println("\n\n[7]  Quit!");
+        System.out.println("[7] Path Expression Query 1");
+        System.out.println("\n\n[8]  Quit!");
         System.out.print("Hi, make your choice :");
     }
 
@@ -283,6 +284,29 @@ class GraphDriver {
                         System.out.println("Disk pages written = "+ res[1]);*/
                     break;
                 case 7:
+                    System.out.print("Enter GRAPHDBNAME PathExpression:");
+                    inp = scanner.nextLine();
+                    varargs = inp.split(" ");
+                    if(dbcreated!=true)
+                    {
+                        systemdef=new SystemDefs(varargs[0],1000,256,"Clock");
+                        systemdef.JavabaseDB.createIndexFiles(varargs[0]);
+                        dbcreated=true;
+                    }
+                    String[] input= new String[2];
+                    input[0]="L:4";
+                    //input[0]="D:18,20,18,47,17";
+//                  input[1]="L:41";
+                    input[1]="D:18,20,18,47,17";
+                    //input[1]="L:930";
+//                    String[] input = varargs[1].split("/");
+//                    System.out.println(input[0]);
+//                    System.out.println(input[1]);
+                    PathExpressionQuery1 pq1 = new PathExpressionQuery1(input,systemdef.JavabaseDB);
+                    pq1.fetchAllTailLabels();
+                    break;
+
+                case 8:
                     try {
                         systemdef.JavabaseBM.flushAllPages();
                     }

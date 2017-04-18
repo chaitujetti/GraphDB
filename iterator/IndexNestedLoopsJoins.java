@@ -43,7 +43,7 @@ public class IndexNestedLoopsJoins extends Iterator
     private int joinType;
 
 
-    public IndexNestedLoopsJoins(int joinType, String outerRelHeapFile, String innerRelHeapFile, String innerRelIndexFile, CondExpr outerCondn[], CondExpr innerCondn[], RID outerRID) throws Exception, IOException, HFException, HFBufMgrException, HFDiskMgrException, ConstructPageException, GetFileEntryException, PinPageException, InvalidTupleSizeException {
+    public IndexNestedLoopsJoins(int joinType, Heapfile outerRelHeapFile, Heapfile innerRelHeapFile, BTreeFile innerRelIndexFile, CondExpr outerCondn[], CondExpr innerCondn[], RID outerRID) throws Exception, IOException, HFException, HFBufMgrException, HFDiskMgrException, ConstructPageException, GetFileEntryException, PinPageException, InvalidTupleSizeException {
         this.joinType= joinType;
         this.outerCondn=outerCondn;
         this.innerCondn=innerCondn;
@@ -65,23 +65,30 @@ public class IndexNestedLoopsJoins extends Iterator
         entry=null;
 
         if(joinType==1||joinType==2) {
-            outerNodeHF = new NodeHeapfile(outerRelHeapFile);   //Might have to change it
-            innerEdgeHF = new EdgeHeapfile(innerRelHeapFile);   // so as to directly get the heap/index file object
-            innerBTreeFile = new BTreeFile(innerRelIndexFile);  // instead of the filename
+            outerNodeHF = (NodeHeapfile) outerRelHeapFile; //new NodeHeapfile(outerRelHeapFile);   //Might have to change it
+            innerEdgeHF = (EdgeHeapfile) innerRelHeapFile; //new EdgeHeapfile(innerRelHeapFile);   // so as to directly get the heap/index file object
+            innerBTreeFile = innerRelIndexFile;  // instead of the filename
 
             //outerRelScan = outerNodeHF.openScan();
-            outerNode = outerNodeHF.getNode((NID)outerRID);
+            NID tempNID = new NID();
+            tempNID.pageNo.pid = outerRID.pageNo.pid;
+            tempNID.slotNo = outerRID.slotNo;
+            outerNode = outerNodeHF.getNode(tempNID);
             innerRelScan = innerBTreeFile.new_scan(new StringKey(outerNode.getLabel()), new StringKey(outerNode.getLabel()));
 
         }
         else if(joinType==3||joinType==4)
         {
-            outerEdgeHF = new EdgeHeapfile(outerRelHeapFile);
-            innerNodeHF = new NodeHeapfile(innerRelHeapFile);
-            innerBTreeFile = new BTreeFile(innerRelIndexFile);
+            outerEdgeHF = (EdgeHeapfile)outerRelHeapFile;
+            innerNodeHF = (NodeHeapfile)innerRelHeapFile;
+            innerBTreeFile = innerRelIndexFile;
 
             //outerRelScan = outerEdgeHF.openScan();
-            outerEdge = outerEdgeHF.getEdge((EID)outerRID);
+            EID tempEID = new EID();
+            //System.out.println("Outer RID:"+Integer.toString(outerRID.pageNo.pid)+","+Integer.toString(outerRID.slotNo));
+            tempEID.pageNo.pid = outerRID.pageNo.pid;
+            tempEID.slotNo = outerRID.slotNo;
+            outerEdge = outerEdgeHF.getEdge(tempEID);
             if (joinType == 3) {
                 innerRelScan = innerBTreeFile.new_scan(new StringKey(outerEdge.getSourceLabel()), new StringKey(outerEdge.getSourceLabel()));
             }
@@ -97,23 +104,27 @@ public class IndexNestedLoopsJoins extends Iterator
     }
 
     public Tuple get_next(RID rid) throws Exception {
-        while((entry = innerRelScan.get_next()) == null) {
+        while((entry = innerRelScan.get_next()) != null) {
             if (joinType == 1 || joinType == 2) {
 
                 if (outerNode == null) {
                     return null;
                 }
                 LeafData leafNode = (LeafData) entry.data;
-                rid = leafNode.getData();
+                RID temprid = leafNode.getData();
+                rid.pageNo.pid = temprid.pageNo.pid;
+                rid.slotNo = temprid.slotNo;
                 EID eid = new EID();
                 eid.pageNo.pid = rid.pageNo.pid;
                 eid.slotNo = rid.slotNo;
                 innerEdge = innerEdgeHF.getEdge(eid);
-
                 short[] strSizes = {10, 10, 10};    //Reference from global constant
                 innerEdge.setHdr((short) 8, edgeAttrs, strSizes);  //8 change in Edge.java
                 if (PredEval.Eval(innerCondn, innerEdge, null, edgeAttrs, null)) {
                     if (PredEval.Eval(outerCondn, outerNode, innerEdge, nodeAttrs, edgeAttrs)) {
+//                        System.out.println("Edge Label INLJ:"+innerEdge.getLabel());
+                        //System.out.println("RID Passed:"+Integer.toString(temprid.pageNo.pid)+","+Integer.toString(temprid.slotNo));
+                        //System.out.println("Edge Weight:"+Integer.toString(innerEdge.getWeight()));
                         return innerEdge;
                     }
                 }
@@ -124,7 +135,10 @@ public class IndexNestedLoopsJoins extends Iterator
                     return null;
                 }
                 LeafData leafNode = (LeafData) entry.data;
-                rid = leafNode.getData();
+                RID temprid = leafNode.getData();
+                rid.pageNo.pid = temprid.pageNo.pid;
+                rid.slotNo = temprid.slotNo;
+
                 NID nid = new NID();
                 nid.pageNo.pid = rid.pageNo.pid;
                 nid.slotNo = rid.slotNo;
@@ -132,7 +146,7 @@ public class IndexNestedLoopsJoins extends Iterator
 
                 short[] strSizes = {10};    //Reference from global constant
                 innerNode.setHdr((short) 2, nodeAttrs, strSizes);
-                if (PredEval.Eval(innerCondn, innerNode, null, nodeAttrs, null)) {
+                if (PredEval.Eval(innerCondn, null, innerNode, null, nodeAttrs)) {
                     if (PredEval.Eval(outerCondn, outerEdge, innerNode, edgeAttrs, nodeAttrs)) {
                         return innerNode;
                     }

@@ -1,5 +1,6 @@
 package operator;
 
+import btree.BTreeFile;
 import heap.*;
 import iterator.*;
 import global.*;
@@ -13,16 +14,16 @@ public class PathExpressionOperator1
     private RID root;
     private int flag;
 
-    private String nodeHeapFile;
-    private String edgeHeapFile;
-    private String nodeIndexFile;
-    private String edgeSourceLabelIndexFile;
+    private NodeHeapfile nodeHeapFile;
+    private EdgeHeapfile edgeHeapFile;
+    private BTreeFile nodeIndexFile;
+    private BTreeFile edgeSourceLabelIndexFile;
 
     Heapfile outputFile;
 
     private int position;
 
-    public PathExpressionOperator1(NodeRegEx[] nodeRegEx, RID firstNode, String nodeHeapFile, String edgeHeapFile, String nodeIndexFile, String edgeSourceLabelIndexFile, String outputHeapFileName) throws IOException, HFException, HFBufMgrException, HFDiskMgrException {
+    public PathExpressionOperator1(NodeRegEx[] nodeRegEx, RID firstNode, NodeHeapfile nodeHeapFile, EdgeHeapfile edgeHeapFile, BTreeFile nodeIndexFile, BTreeFile edgeSourceLabelIndexFile, String outputHeapFileName) throws IOException, HFException, HFBufMgrException, HFDiskMgrException {
         this.nodeRegEx=nodeRegEx;
         root = new RID();
         root.pageNo.pid = firstNode.pageNo.pid;
@@ -38,7 +39,7 @@ public class PathExpressionOperator1
 
     public CondExpr[] setNodeExpressions(String label)
     {
-        CondExpr[] expr = new CondExpr[1];
+        CondExpr[] expr = new CondExpr[2];
         expr[0] = new CondExpr();
         expr[0].next = null;
         expr[0].op = new AttrOperator(AttrOperator.aopEQ);
@@ -49,12 +50,13 @@ public class PathExpressionOperator1
         expr[0].type2 = new AttrType(AttrType.attrString);
         expr[0].operand2.string = label;
 
+        expr[1]=null;
         return expr;
     }
 
     public CondExpr[] setNodeExpressions(Descriptor desc)
     {
-        CondExpr[] expr = new CondExpr[1];
+        CondExpr[] expr = new CondExpr[2];
         expr[0] = new CondExpr();
         expr[0].next = null;
         expr[0].op = new AttrOperator(AttrOperator.aopEQ);
@@ -65,6 +67,7 @@ public class PathExpressionOperator1
         expr[0].type2 = new AttrType(AttrType.attrDesc);
         expr[0].operand2.descriptor = desc;
 
+        expr[1]=null;
         return expr;
 
     }
@@ -89,7 +92,11 @@ public class PathExpressionOperator1
                     EID eid = new EID();
                     eid.pageNo.pid = innerRid.pageNo.pid;
                     eid.slotNo = innerRid.slotNo;
-                    DFS((RID)eid,2,pos);
+//                    RID tempRid = new RID();
+//                    tempRid.pageNo.pid = eid.pageNo.pid;
+//                    tempRid.slotNo = eid.slotNo;
+                    //System.out.println("RID passed by reference:"+Integer.toString(innerRid.pageNo.pid)+","+Integer.toString(innerRid.slotNo));
+                    DFS(innerRid,2,pos);
                 }
                 else {
                     break;
@@ -118,13 +125,26 @@ public class PathExpressionOperator1
                     NID nid = new NID();
                     nid.pageNo.pid = innerRid.pageNo.pid;
                     nid.slotNo = innerRid.slotNo;
-                    if(nodeRegEx[pos+1]!=null) {
-                        DFS((RID) nid, 1, pos + 1);
+//                    if(nodeRegEx[pos+1]!=null)
+                    //System.out.println("Pos:"+Integer.toString(pos)+" Len:"+Integer.toString(nodeRegEx.length));
+                    if(!(pos==nodeRegEx.length-1))
+                    {
+                        RID tempRid = new RID();
+                        tempRid.pageNo.pid = nid.pageNo.pid;
+                        tempRid.slotNo = nid.slotNo;
+                        DFS(tempRid, 1, pos + 1);
                     }
                     else
                     {
                         //write to outputFile
                         Tuple tuple = new Tuple();
+                        System.out.println("TailNode's RID:"+Integer.toString(nid.pageNo.pid)+","+Integer.toString(nid.slotNo));
+                        Node node1 = nodeHeapFile.getNode(nid);
+                        System.out.println("Tail Label:"+node1.getLabel());
+                        AttrType[] types= new AttrType[2];
+                        types[0] = new AttrType(AttrType.attrInteger);
+                        types[1] = new AttrType(AttrType.attrInteger);
+                        tuple.setHdr((short)2,types,null);
                         tuple.setIntFld(1,nid.pageNo.pid);
                         tuple.setIntFld(2,nid.slotNo);
                         byte[] tempiter = tuple.getTupleByteArray();
