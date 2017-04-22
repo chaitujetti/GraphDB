@@ -1,27 +1,31 @@
 package query;
+
 import btree.BTreeFile;
 import diskmgr.GraphDB;
 import global.*;
 import heap.*;
 import iterator.Sort;
 import iterator.FileScan;
-import operator.*;
+import operator.EdgeRegEx;
+import operator.NodeRegEx;
+import operator.PathExpressionOperator2;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
- * Created by bharath on 4/17/17.
+ * Created by ankur on 4/20/17.
  */
-public class PathExpressionQuery1 {
-    private NodeRegEx[] nodePathExp;
+public class PathExpressionQuery2 {
+
+    private EdgeRegEx[] nodePathExp;
     Heapfile output;
     NodeHeapfile nhf;
     EdgeHeapfile ehf;
     BTreeFile nodeIndexFile;
     BTreeFile edgeSourceLabelsIndexFile;
+    NodeRegEx firstNode;
 
-    public PathExpressionQuery1(String[] input, GraphDB graphDB) throws IOException, HFException, HFBufMgrException, HFDiskMgrException {
+    public PathExpressionQuery2(String[] input, GraphDB graphDB) throws IOException, HFException, HFBufMgrException, HFDiskMgrException {
         parseInput(input);
         nhf = graphDB.getNhf();
         ehf = graphDB.getEhf();
@@ -31,36 +35,49 @@ public class PathExpressionQuery1 {
 
     public void parseInput(String[] input)
     {
-        int numNodes = input.length;
-        nodePathExp = new NodeRegEx[numNodes];
-        for(int i=0;i<numNodes;i++)
+
+        if(input[0].startsWith("L:"))
         {
-            if(input[i].startsWith("L:"))
+            String label = input[0].split(":")[1];
+            NodeRegEx node = new NodeRegEx(label);
+            firstNode=node;
+        }
+        else
+        {
+            String descriptorStr = input[0].split(":")[1];
+            String[] tokens = descriptorStr.split(",");
+            short[] vals = new short[5];
+            for(int j=0;j<5;j++)
             {
-                String label = input[i].split(":")[1];
-                NodeRegEx node = new NodeRegEx(label);
-                nodePathExp[i]=node;
+                vals[j]=Short.parseShort(tokens[j]);
+                System.out.println(vals[j]);
+            }
+            Descriptor desc = new Descriptor();
+            desc.set(vals[0],vals[1],vals[2],vals[3],vals[4]);
+            NodeRegEx node = new NodeRegEx(desc);
+            firstNode=node;
+        }
+
+        int numEdges = input.length-1;
+        nodePathExp = new EdgeRegEx[numEdges];
+        for(int i=0;i<numEdges;i++)
+        {
+            if(input[i+1].startsWith("L:"))
+            {
+                String label = input[i+1].split(":")[1];
+                EdgeRegEx edge = new EdgeRegEx(label);
+                nodePathExp[i]=edge;
             }
             else
             {
-                String descriptorStr = input[i].split(":")[1];
-                String[] tokens = descriptorStr.split(",");
-                short[] vals = new short[5];
-                for(int j=0;j<5;j++)
-                {
-                    vals[j]=Short.parseShort(tokens[j]);
-                }
-                Descriptor desc = new Descriptor();
-                desc.set(vals[0],vals[1],vals[2],vals[3],vals[4]);
-                NodeRegEx node = new NodeRegEx(desc);
-                nodePathExp[i]=node;
+                String maxEdgeWeight = input[i+1].split(":")[1];
+                EdgeRegEx edge = new EdgeRegEx(Integer.parseInt(maxEdgeWeight));
+                nodePathExp[i]=edge;
             }
         }
     }
 
     public void fetchAllTailLabels() throws Exception {
-        NodeRegEx firstNode = nodePathExp[0];
-        NodeRegEx[] nodeRegExFromSecond = Arrays.copyOfRange(nodePathExp, 1, nodePathExp.length);
         if (firstNode.getLabel()==null)
         {
             NScan nscan = nhf.openScan();
@@ -71,13 +88,14 @@ public class PathExpressionQuery1 {
             while (node!=null)
             {
                 double isEquals = firstNodeDesc.equal(node.getDesc());
+                System.out.println(node.getDesc().get(0)+" "+node.getDesc().get(1)+" "+node.getDesc().get(2)+" "+node.getDesc().get(3)+" "+node.getDesc().get(4));
                 if(isEquals==1)//true
                 {
                     RID tempRID = new RID();
                     tempRID.pageNo.pid = root.pageNo.pid;
                     tempRID.slotNo = root.slotNo;
-                    PathExpressionOperator1 pe1 = new PathExpressionOperator1(nodeRegExFromSecond, tempRID,nhf, ehf, nodeIndexFile, edgeSourceLabelsIndexFile, "TemporaryOutput");
-                    FileScan tempFileScan = pe1.findTailNodes();
+                    PathExpressionOperator2 pe2 = new PathExpressionOperator2(nodePathExp, tempRID,nhf, ehf, nodeIndexFile, edgeSourceLabelsIndexFile, "TemporaryOutput");
+                    FileScan tempFileScan = pe2.findTailNodes();
 
                     AttrType[] types= new AttrType[1];
                     types[0] = new AttrType(AttrType.attrString);
@@ -113,14 +131,16 @@ public class PathExpressionQuery1 {
             node = nscan.getNext(root);
             while (node!=null)
             {
+                //System.out.println(node.getLabel());
+                //node.print();
                 if(firstNodeLabel.equals(node.getLabel()))//true
                 {
                     RID tempRID = new RID();
                     tempRID.pageNo.pid = root.pageNo.pid;
                     tempRID.slotNo = root.slotNo;
                     System.out.println("Temp RID:"+Integer.toString(tempRID.pageNo.pid)+","+Integer.toString(tempRID.slotNo));
-                    PathExpressionOperator1 pe1 = new PathExpressionOperator1(nodeRegExFromSecond,tempRID,nhf, ehf, nodeIndexFile, edgeSourceLabelsIndexFile, "TemporaryOutput");
-                    FileScan tempFileScan = pe1.findTailNodes();
+                    PathExpressionOperator2 pe2 = new PathExpressionOperator2(nodePathExp,tempRID,nhf, ehf, nodeIndexFile, edgeSourceLabelsIndexFile, "TemporaryOutput");
+                    FileScan tempFileScan = pe2.findTailNodes();
 
                     AttrType[] types= new AttrType[1];
                     types[0] = new AttrType(AttrType.attrString);

@@ -30,7 +30,8 @@ class GraphDriver {
         System.out.println("[5] Task 14 - Simple Node Query");
         System.out.println("[6] Task 15 - Simple Edge Query");
         System.out.println("[7] Path Expression Query 1");
-        System.out.println("\n\n[8]  Quit!");
+        System.out.println("[8] Path Expression Query 2");
+        System.out.println("\n\n[9]  Quit!");
         System.out.print("Hi, make your choice :");
     }
 
@@ -52,7 +53,7 @@ class GraphDriver {
         boolean dbcreated=false;
         SystemDefs systemdef=null;
 
-        while (choice != 7) {
+        while (choice != 9) {
             menu();
 
             //try {
@@ -296,8 +297,8 @@ class GraphDriver {
                     String[] input= new String[2];
                     input[0]="L:4";
                     //input[0]="D:18,20,18,47,17";
-//                  input[1]="L:41";
-                    input[1]="D:18,20,18,47,17";
+                    input[1]="L:41";
+                    //input[1]="D:18,20,18,47,17";
                     //input[1]="L:930";
 //                    String[] input = varargs[1].split("/");
 //                    System.out.println(input[0]);
@@ -307,6 +308,27 @@ class GraphDriver {
                     break;
 
                 case 8:
+                    System.out.print("Enter GRAPHDBNAME PathExpression:");
+                    inp = scanner.nextLine();
+                    varargs = inp.split(" ");
+                    if(dbcreated!=true)
+                    {
+                        systemdef=new SystemDefs(varargs[0],1000,256,"Clock");
+                        systemdef.JavabaseDB.createIndexFiles(varargs[0]);
+                        dbcreated=true;
+                    }
+                    String[] input2= new String[2];
+                    //input2[0]="L:0";
+                    input2[0]="D:18,20,18,47,17";
+//                  input[1]="L:41";
+                    //input2[1]="L:0_1000";
+                    input2[1]="W:40";
+                    //input[1]="L:930";
+                    PathExpressionQuery2 pq2 = new PathExpressionQuery2(input2,systemdef.JavabaseDB);
+                    pq2.fetchAllTailLabels();
+                    break;
+
+                case 9:
                     try {
                         systemdef.JavabaseBM.flushAllPages();
                     }

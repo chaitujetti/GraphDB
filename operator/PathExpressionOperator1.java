@@ -12,6 +12,7 @@ public class PathExpressionOperator1
 {
     private NodeRegEx[] nodeRegEx;
     private RID root;
+    private String rootLabel="";
     private int flag;
 
     private NodeHeapfile nodeHeapFile;
@@ -72,10 +73,34 @@ public class PathExpressionOperator1
 
     }
 
-    public Scan findTailNodes() throws Exception {
+    public FileScan findTailNodes() throws Exception {
+        NID tempNID = new NID();
+        tempNID.pageNo.pid = root.pageNo.pid;
+        tempNID.slotNo = root.slotNo;
+        Node rootNode = nodeHeapFile.getNode(tempNID);
+        rootLabel=rootNode.getLabel();
+
         DFS(root,1,0);
-        Scan scan = new Scan(outputFile);
-        return scan;
+
+        FldSpec [] Sprojection = new FldSpec[1];
+        Sprojection[0] = new FldSpec(new RelSpec(RelSpec.outer), 1);
+
+        AttrType[] types= new AttrType[1];
+        types[0] = new AttrType(AttrType.attrString);
+
+        short [] Ssizes = new short [1];
+        Ssizes[0] = 10;
+
+        FileScan am = null;
+        try {
+            am  = new FileScan(outputFile._fileName, types, Ssizes,
+                    (short)1, (short)1,
+                    Sprojection, null);
+        }
+        catch (Exception e) {
+            System.err.println (""+e);
+        }
+        return am;
     }
 
     public void DFS(RID rid, int flag, int pos) throws Exception
@@ -92,10 +117,6 @@ public class PathExpressionOperator1
                     EID eid = new EID();
                     eid.pageNo.pid = innerRid.pageNo.pid;
                     eid.slotNo = innerRid.slotNo;
-//                    RID tempRid = new RID();
-//                    tempRid.pageNo.pid = eid.pageNo.pid;
-//                    tempRid.slotNo = eid.slotNo;
-                    //System.out.println("RID passed by reference:"+Integer.toString(innerRid.pageNo.pid)+","+Integer.toString(innerRid.slotNo));
                     DFS(innerRid,2,pos);
                 }
                 else {
@@ -125,8 +146,6 @@ public class PathExpressionOperator1
                     NID nid = new NID();
                     nid.pageNo.pid = innerRid.pageNo.pid;
                     nid.slotNo = innerRid.slotNo;
-//                    if(nodeRegEx[pos+1]!=null)
-                    //System.out.println("Pos:"+Integer.toString(pos)+" Len:"+Integer.toString(nodeRegEx.length));
                     if(!(pos==nodeRegEx.length-1))
                     {
                         RID tempRid = new RID();
@@ -141,12 +160,14 @@ public class PathExpressionOperator1
                         System.out.println("TailNode's RID:"+Integer.toString(nid.pageNo.pid)+","+Integer.toString(nid.slotNo));
                         Node node1 = nodeHeapFile.getNode(nid);
                         System.out.println("Tail Label:"+node1.getLabel());
-                        AttrType[] types= new AttrType[2];
-                        types[0] = new AttrType(AttrType.attrInteger);
-                        types[1] = new AttrType(AttrType.attrInteger);
-                        tuple.setHdr((short)2,types,null);
-                        tuple.setIntFld(1,nid.pageNo.pid);
-                        tuple.setIntFld(2,nid.slotNo);
+                        AttrType[] types= new AttrType[1];
+                        types[0] = new AttrType(AttrType.attrString);
+                        short [] Ssizes = new short [1];
+                        Ssizes[0] = 10;
+                        tuple.setHdr((short)1,types,Ssizes);
+
+                        String result = rootLabel+"_"+node1.getLabel();
+                        tuple.setStrFld(1,result);
                         byte[] tempiter = tuple.getTupleByteArray();
                         outputFile.insertRecord(tempiter);
                     }

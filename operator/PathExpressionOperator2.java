@@ -6,12 +6,16 @@ import iterator.*;
 import global.*;
 
 import java.io.IOException;
+import java.time.Clock;
 
-
+/**
+ * Created by ankur on 4/20/17.
+ */
 public class PathExpressionOperator2
 {
     private EdgeRegEx[] edgeRegEx;
     private RID root;
+    private String rootLabel="";
     private int flag;
 
     private NodeHeapfile nodeHeapFile;
@@ -39,24 +43,25 @@ public class PathExpressionOperator2
 
     public CondExpr[] setEdgeExpressions(String label)
     {
-        //0 - edge condition based on edge label
-        CondExpr[] expr = new CondExpr[1];
+        CondExpr[] expr = new CondExpr[2];
         expr[0] = new CondExpr();
         expr[0].next = null;
         expr[0].op = new AttrOperator(AttrOperator.aopEQ);
 
         expr[0].type1 = new AttrType(AttrType.attrSymbol);
-        expr[0].operand1.symbol = new FldSpec(new RelSpec(RelSpec.innerRel),1);
+        expr[0].operand1.symbol = new FldSpec(new RelSpec(RelSpec.innerRel),3);
 
         expr[0].type2 = new AttrType(AttrType.attrString);
         expr[0].operand2.string = label;
+
+        expr[1]=null;
 
         return expr;
     }
 
     public CondExpr[] setEdgeExpressions(int weight)
     {
-        CondExpr[] expr = new CondExpr[1];
+        CondExpr[] expr = new CondExpr[2];
         expr[0] = new CondExpr();
         expr[0].next = null;
         expr[0].op = new AttrOperator(AttrOperator.aopLE);
@@ -67,14 +72,40 @@ public class PathExpressionOperator2
         expr[0].type2 = new AttrType(AttrType.attrInteger);
         expr[0].operand2.integer = weight;
 
+        expr[1]=null;
+
         return expr;
     }
 
 
-    public Scan findTailNodes() throws Exception {
+    public FileScan findTailNodes() throws Exception {
+        NID tempNID = new NID();
+        tempNID.pageNo.pid = root.pageNo.pid;
+        tempNID.slotNo = root.slotNo;
+        Node rootNode = nodeHeapFile.getNode(tempNID);
+        rootLabel=rootNode.getLabel();
+
         DFS(root,1,0);
-        Scan scan = new Scan(outputFile);
-        return scan;
+
+        FldSpec [] Sprojection = new FldSpec[1];
+        Sprojection[0] = new FldSpec(new RelSpec(RelSpec.outer), 1);
+
+        AttrType[] types= new AttrType[1];
+        types[0] = new AttrType(AttrType.attrString);
+
+        short [] Ssizes = new short [1];
+        Ssizes[0] = 10;
+
+        FileScan am = null;
+        try {
+            am  = new FileScan(outputFile._fileName, types, Ssizes,
+                    (short)1, (short)1,
+                    Sprojection, null);
+        }
+        catch (Exception e) {
+            System.err.println (""+e);
+        }
+        return am;
     }
 
     public void DFS(RID rid, int flag, int pos) throws Exception
@@ -92,8 +123,10 @@ public class PathExpressionOperator2
                 innerCond = setEdgeExpressions(token.getLabel());
             }
 
+
             IndexNestedLoopsJoins inlj = new IndexNestedLoopsJoins(1,nodeHeapFile, edgeHeapFile, edgeSourceLabelIndexFile, null,innerCond, rid );
             RID innerRid = new RID();
+
             while (true)
             {
                 Edge edge = (Edge)inlj.get_next(innerRid);
@@ -102,7 +135,6 @@ public class PathExpressionOperator2
                     EID eid = new EID();
                     eid.pageNo.pid = innerRid.pageNo.pid;
                     eid.slotNo = innerRid.slotNo;
-                    //DFS((RID)eid,2,pos);
                     DFS(innerRid,2,pos);
                 }
                 else {
@@ -122,15 +154,28 @@ public class PathExpressionOperator2
                     NID nid = new NID();
                     nid.pageNo.pid = innerRid.pageNo.pid;
                     nid.slotNo = innerRid.slotNo;
-                    if(edgeRegEx[pos+1]!=null) {
-                        DFS((RID) nid, 1, pos + 1);
+
+                    if(!(pos==edgeRegEx.length-1)) {
+                        RID tempRid = new RID();
+                        tempRid.pageNo.pid = nid.pageNo.pid;
+                        tempRid.slotNo = nid.slotNo;
+                        DFS((RID) tempRid, 1, pos + 1);
                     }
                     else
                     {
                         //write to outputFile
                         Tuple tuple = new Tuple();
-                        tuple.setIntFld(1,nid.pageNo.pid);
-                        tuple.setIntFld(2,nid.slotNo);
+                        System.out.println("TailNode's RID:"+Integer.toString(nid.pageNo.pid)+","+Integer.toString(nid.slotNo));
+                        Node node1 = nodeHeapFile.getNode(nid);
+                        System.out.println("Tail Label:"+node1.getLabel());
+                        AttrType[] types= new AttrType[1];
+                        types[0] = new AttrType(AttrType.attrString);
+                        short [] Ssizes = new short [1];
+                        Ssizes[0] = 10;
+                        tuple.setHdr((short)1,types,Ssizes);
+
+                        String result = rootLabel+"_"+node1.getLabel();
+                        tuple.setStrFld(1,result);
                         byte[] tempiter = tuple.getTupleByteArray();
                         outputFile.insertRecord(tempiter);
                     }
