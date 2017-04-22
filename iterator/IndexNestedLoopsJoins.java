@@ -54,12 +54,13 @@ public class IndexNestedLoopsJoins extends Iterator
 
         edgeAttrs= new AttrType[8];
         edgeAttrs[0]= new AttrType(AttrType.attrString);
-        for(int j=1;j<6;j++)
+        edgeAttrs[1]= new AttrType(AttrType.attrString);
+        edgeAttrs[2]= new AttrType(AttrType.attrString);
+        for(int j=3;j<8;j++)
         {
             edgeAttrs[j]=new AttrType(AttrType.attrInteger);
         }
-        edgeAttrs[6]= new AttrType(AttrType.attrString);
-        edgeAttrs[7]= new AttrType(AttrType.attrString);
+
 
         innerRelScan = null;
         entry=null;
@@ -120,7 +121,7 @@ public class IndexNestedLoopsJoins extends Iterator
                 innerEdge = innerEdgeHF.getEdge(eid);
                 short[] strSizes = {10, 10, 10};    //Reference from global constant
                 innerEdge.setHdr((short) 8, edgeAttrs, strSizes);  //8 change in Edge.java
-                if (PredEval.Eval(innerCondn, innerEdge, null, edgeAttrs, null)) {
+                if (PredEval.Eval(innerCondn, null, innerEdge, null, edgeAttrs)) {
                     if (PredEval.Eval(outerCondn, outerNode, innerEdge, nodeAttrs, edgeAttrs)) {
 //                        System.out.println("Edge Label INLJ:"+innerEdge.getLabel());
                         //System.out.println("RID Passed:"+Integer.toString(temprid.pageNo.pid)+","+Integer.toString(temprid.slotNo));
