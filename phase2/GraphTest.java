@@ -31,7 +31,8 @@ class GraphDriver {
         System.out.println("[6] Task 15 - Simple Edge Query");
         System.out.println("[7] Path Expression Query 1");
         System.out.println("[8] Path Expression Query 2");
-        System.out.println("\n\n[9]  Quit!");
+        System.out.println("[9] Path Expression Query 3");
+        System.out.println("\n\n[10]  Quit!");
         System.out.print("Hi, make your choice :");
     }
 
@@ -53,7 +54,7 @@ class GraphDriver {
         boolean dbcreated=false;
         SystemDefs systemdef=null;
 
-        while (choice != 9) {
+        while (choice != 10) {
             menu();
 
             //try {
@@ -297,8 +298,8 @@ class GraphDriver {
                     String[] input= new String[2];
                     input[0]="L:4";
                     //input[0]="D:18,20,18,47,17";
-                    input[1]="L:41";
-                    //input[1]="D:18,20,18,47,17";
+                    //input[1]="L:41";
+                    input[1]="D:18,20,18,47,17";
                     //input[1]="L:930";
 //                    String[] input = varargs[1].split("/");
 //                    System.out.println(input[0]);
@@ -329,6 +330,24 @@ class GraphDriver {
                     break;
 
                 case 9:
+                    System.out.print("Enter GRAPHDBNAME PathExpression:");
+                    inp = scanner.nextLine();
+                    varargs = inp.split(" ");
+                    if(dbcreated!=true)
+                    {
+                        systemdef=new SystemDefs(varargs[0],1000,256,"Clock");
+                        systemdef.JavabaseDB.createIndexFiles(varargs[0]);
+                        dbcreated=true;
+                    }
+                    String[] input3= new String[2];
+                    input3[0]="L:0";
+                    input3[1]="W:70";
+                    
+                    PathExpressionQuery3 pq3 = new PathExpressionQuery3(input3,systemdef.JavabaseDB);
+                    pq3.fetchAllTailLabels();
+                    break;
+
+                case 10:
                     try {
                         systemdef.JavabaseBM.flushAllPages();
                     }
