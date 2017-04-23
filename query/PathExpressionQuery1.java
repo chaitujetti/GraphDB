@@ -103,6 +103,7 @@ public class PathExpressionQuery1 {
                     }
                 }
             }
+            sort_nodes.close();
         }
         tempFileScan.close();
 
@@ -127,7 +128,7 @@ public class PathExpressionQuery1 {
                     RID tempRID = new RID();
                     tempRID.pageNo.pid = root.pageNo.pid;
                     tempRID.slotNo = root.slotNo;
-                    System.out.println("Incoming Label:"+node.getLabel());
+                    //System.out.println("Incoming Label:"+node.getLabel());
                     pe1 = new PathExpressionOperator1(nodeRegExFromSecond, tempRID,nhf, ehf, nodeIndexFile, edgeSourceLabelsIndexFile, "TemporaryOutput");
 //                    FileScan tempFileScan = pe1.findTailNodes();
                     pe1.findTailNodes();
@@ -159,7 +160,7 @@ public class PathExpressionQuery1 {
                     RID tempRID = new RID();
                     tempRID.pageNo.pid = root.pageNo.pid;
                     tempRID.slotNo = root.slotNo;
-                    System.out.println("Temp RID:"+Integer.toString(tempRID.pageNo.pid)+","+Integer.toString(tempRID.slotNo));
+                    //System.out.println("Temp RID:"+Integer.toString(tempRID.pageNo.pid)+","+Integer.toString(tempRID.slotNo));
                     PathExpressionOperator1 pe1 = new PathExpressionOperator1(nodeRegExFromSecond,tempRID,nhf, ehf, nodeIndexFile, edgeSourceLabelsIndexFile, "TemporaryOutput");
                     pe1.findTailNodes();
                     projectResult(pe1.getOutputFileScanObject(),queryType);
