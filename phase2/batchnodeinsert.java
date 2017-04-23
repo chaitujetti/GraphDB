@@ -55,8 +55,6 @@ public class batchnodeinsert extends TestDriver implements GlobalConst
 
                 iterator.setLabel(temp[0]);
                 iterator.setDesc(desc);
-                // byte[] tempiter = iterator.getTupleByteArray();
-                // Node nd=new Node(tempiter,0);
                 systemdef.JavabaseDB.insertNodeIntoGraphDB(iterator.getTupleByteArray());
             } else {
                 System.out.println("Existing Node: " + temp[0]);

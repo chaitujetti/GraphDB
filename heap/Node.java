@@ -88,6 +88,8 @@ public class Node extends Tuple
     
     public void print() throws IOException, FieldNumberOutOfBoundException
     {
+        this.desc = getDescFld(2);
+        this.label = getStrFld(1);
         System.out.println("[Label: "+ this.label + ", Descriptors: "+ this.desc.get(0) + ", " + this.desc.get(1) + ", " + this.desc.get(2) + ", " + this.desc.get(3) + ", " + this.desc.get(4) +"]");
     }
 

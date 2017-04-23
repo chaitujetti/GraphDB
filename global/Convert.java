@@ -169,6 +169,7 @@ public class Convert{
       byte tmp[] = new byte[10];
       byte tmpval[] = new byte[2];
       Descriptor desc = new Descriptor();
+      short[] value = new short[5];
       // copy the value from data array out to a tmp byte array  
       System.arraycopy (data, position, tmp, 0, 10);
 
@@ -180,9 +181,11 @@ public class Convert{
         System.arraycopy (tmp, i, tmpval, 0, 2);
         in = new ByteArrayInputStream(tmpval);
         instr = new DataInputStream(in);
-        desc.value[i/2] = instr.readShort();
+        value[i/2] = instr.readShort();
       }    
 
+      desc.set(value[0], value[1], value[2], value[3], value[4]);
+      
       return desc;
     }
 
@@ -351,12 +354,12 @@ public class Convert{
        * underlying output stream
        */
       
-      OutputStream out = new ByteArrayOutputStream();
-      DataOutputStream outstr = new DataOutputStream (out);
-      
       for(int i = 0; i < 5; i++){
+        OutputStream out = new ByteArrayOutputStream();
+        DataOutputStream outstr = new DataOutputStream (out);
+      
         // write the value to the output stream
-        outstr.writeShort(value.value[i]);
+        outstr.writeShort(value.get(i));
         
         // creates a byte array with this output stream size and the
         // valid contents of the buffer have been copied into it
