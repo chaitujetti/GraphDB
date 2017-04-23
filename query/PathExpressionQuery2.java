@@ -77,7 +77,58 @@ public class PathExpressionQuery2 {
         }
     }
 
-    public void fetchAllTailLabels() throws Exception {
+    public void projectResult(FileScan tempFileScan, String queryType) throws Exception {
+        if(queryType.equals("a"))
+        {
+            System.out.println("Unsorted Output");
+            Tuple t;
+            while (tempFileScan!=null && (t=tempFileScan.get_next())!=null) {
+                System.out.println(t.getStrFld(1));
+            }
+        }
+
+        if(queryType.equals("b")||queryType.equals("c"))
+        {
+            AttrType[] types = new AttrType[1];
+            types[0] = new AttrType(AttrType.attrString);
+
+            short[] Ssizes = new short[1];
+            Ssizes[0] = 10;
+            TupleOrder ascending = new TupleOrder(TupleOrder.Ascending);
+            Sort sort_nodes = null;
+            try {
+                sort_nodes = new Sort(types, (short) 1, Ssizes, tempFileScan, 1, ascending, Ssizes[0], 10);
+            } catch (Exception e) {
+                System.err.println("Error in Sort:" + e);
+            }
+
+            if(queryType.equals("b")) {
+                System.out.println("Sorted");
+                Tuple t;
+                while ((t = sort_nodes.get_next()) != null) {
+                    System.out.println(t.getStrFld(1));
+                }
+            }
+
+            if(queryType.equals("c")) {
+                System.out.println("Distinct");
+                Tuple t;
+                String previousValue="";
+                while ((t = sort_nodes.get_next()) != null) {
+                    String currentValue = t.getStrFld(1);
+                    if(!currentValue.equals(previousValue)) {
+                        System.out.println(currentValue);
+                        previousValue=currentValue;
+                    }
+                }
+            }
+            sort_nodes.close();
+        }
+        tempFileScan.close();
+
+    }
+
+    public void fetchAllTailLabels(String queryType) throws Exception {
         if (firstNode.getLabel()==null)
         {
             NScan nscan = nhf.openScan();
@@ -85,41 +136,23 @@ public class PathExpressionQuery2 {
             NID root = new NID();
             Node node;
             node = nscan.getNext(root);
+            PathExpressionOperator2 pe2=null;
             while (node!=null)
             {
                 double isEquals = firstNodeDesc.equal(node.getDesc());
-                System.out.println(node.getDesc().get(0)+" "+node.getDesc().get(1)+" "+node.getDesc().get(2)+" "+node.getDesc().get(3)+" "+node.getDesc().get(4));
+                //System.out.println(node.getDesc().get(0)+" "+node.getDesc().get(1)+" "+node.getDesc().get(2)+" "+node.getDesc().get(3)+" "+node.getDesc().get(4));
                 if(isEquals==1)//true
                 {
                     RID tempRID = new RID();
                     tempRID.pageNo.pid = root.pageNo.pid;
                     tempRID.slotNo = root.slotNo;
-                    PathExpressionOperator2 pe2 = new PathExpressionOperator2(nodePathExp, tempRID,nhf, ehf, nodeIndexFile, edgeSourceLabelsIndexFile, "TemporaryOutput");
-                    FileScan tempFileScan = pe2.findTailNodes();
-
-                    AttrType[] types= new AttrType[1];
-                    types[0] = new AttrType(AttrType.attrString);
-
-                    short [] Ssizes = new short [1];
-                    Ssizes[0] = 10;
-                    TupleOrder ascending = new TupleOrder(TupleOrder.Ascending);
-
-                    Sort sort_nodes = null;
-                    try {
-                        sort_nodes = new Sort (types,(short)1, Ssizes, tempFileScan, 1, ascending, Ssizes[0], 10);
-                    }
-                    catch (Exception e) {
-                        System.err.println (""+e);
-                    }
-
-
-                    Tuple t;
-                    while ((t = sort_nodes.get_next()) != null) {
-                        System.out.println("Sorted: "+t.getStrFld(1));
-                    }
+                    pe2 = new PathExpressionOperator2(nodePathExp, tempRID,nhf, ehf, nodeIndexFile, edgeSourceLabelsIndexFile, "TemporaryOutput");
+                    pe2.findTailNodes();
                 }
                 node = nscan.getNext(root);
             }
+            projectResult(pe2.getOutputFileScanObject(),queryType);
+            pe2.close();
         }
 
         else
@@ -129,6 +162,7 @@ public class PathExpressionQuery2 {
             NID root = new NID();
             Node node;
             node = nscan.getNext(root);
+            PathExpressionOperator2 pe2=null;
             while (node!=null)
             {
                 //System.out.println(node.getLabel());
@@ -138,34 +172,15 @@ public class PathExpressionQuery2 {
                     RID tempRID = new RID();
                     tempRID.pageNo.pid = root.pageNo.pid;
                     tempRID.slotNo = root.slotNo;
-                    System.out.println("Temp RID:"+Integer.toString(tempRID.pageNo.pid)+","+Integer.toString(tempRID.slotNo));
-                    PathExpressionOperator2 pe2 = new PathExpressionOperator2(nodePathExp,tempRID,nhf, ehf, nodeIndexFile, edgeSourceLabelsIndexFile, "TemporaryOutput");
-                    FileScan tempFileScan = pe2.findTailNodes();
-
-                    AttrType[] types= new AttrType[1];
-                    types[0] = new AttrType(AttrType.attrString);
-
-                    short [] Ssizes = new short [1];
-                    Ssizes[0] = 10;
-                    TupleOrder ascending = new TupleOrder(TupleOrder.Ascending);
-
-                    Sort sort_nodes = null;
-                    try {
-                        sort_nodes = new Sort (types,(short)1, Ssizes, tempFileScan, 1, ascending, Ssizes[0], 10);
-                    }
-                    catch (Exception e) {
-                        System.err.println (""+e);
-                    }
-
-
-                    Tuple t;
-                    while ((t = sort_nodes.get_next()) != null) {
-                        System.out.println("Sorted: "+t.getStrFld(1));
-                    }
+                    //System.out.println("Temp RID:"+Integer.toString(tempRID.pageNo.pid)+","+Integer.toString(tempRID.slotNo));
+                    pe2 = new PathExpressionOperator2(nodePathExp,tempRID,nhf, ehf, nodeIndexFile, edgeSourceLabelsIndexFile, "TemporaryOutput");
+                    pe2.findTailNodes();
                     break; //////Should be there in both query types
                 }
                 node = nscan.getNext(root);
             }
+            projectResult(pe2.getOutputFileScanObject(),queryType);
+            pe2.close();
         }
     }
 }
