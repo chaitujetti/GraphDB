@@ -20,6 +20,8 @@ public class PathExpressionOperator1
     private BTreeFile nodeIndexFile;
     private BTreeFile edgeSourceLabelIndexFile;
 
+    private FileScan outputFilescan;
+
     Heapfile outputFile;
 
     private int position;
@@ -36,6 +38,7 @@ public class PathExpressionOperator1
         flag=1;
         position =0;
         outputFile = new Heapfile(outputHeapFileName);
+        outputFilescan = null;
     }
 
     public CondExpr[] setNodeExpressions(String label)
@@ -73,15 +76,8 @@ public class PathExpressionOperator1
 
     }
 
-    public FileScan findTailNodes() throws Exception {
-        NID tempNID = new NID();
-        tempNID.pageNo.pid = root.pageNo.pid;
-        tempNID.slotNo = root.slotNo;
-        Node rootNode = nodeHeapFile.getNode(tempNID);
-        rootLabel=rootNode.getLabel();
-
-        DFS(root,1,0);
-
+    public FileScan getOutputFileScanObject()
+    {
         FldSpec [] Sprojection = new FldSpec[1];
         Sprojection[0] = new FldSpec(new RelSpec(RelSpec.outer), 1);
 
@@ -91,16 +87,26 @@ public class PathExpressionOperator1
         short [] Ssizes = new short [1];
         Ssizes[0] = 10;
 
-        FileScan am = null;
+        //FileScan am = null;
         try {
-            am  = new FileScan(outputFile._fileName, types, Ssizes,
+            outputFilescan  = new FileScan(outputFile._fileName, types, Ssizes,
                     (short)1, (short)1,
                     Sprojection, null);
         }
         catch (Exception e) {
             System.err.println (""+e);
         }
-        return am;
+        return outputFilescan;
+    }
+    public void findTailNodes() throws Exception {
+        NID tempNID = new NID();
+        tempNID.pageNo.pid = root.pageNo.pid;
+        tempNID.slotNo = root.slotNo;
+        Node rootNode = nodeHeapFile.getNode(tempNID);
+        rootLabel=rootNode.getLabel();
+
+        DFS(root,1,0);
+
     }
 
     public void DFS(RID rid, int flag, int pos) throws Exception
@@ -167,6 +173,7 @@ public class PathExpressionOperator1
                         tuple.setHdr((short)1,types,Ssizes);
 
                         String result = rootLabel+"_"+node1.getLabel();
+                        System.out.println(result);
                         tuple.setStrFld(1,result);
                         byte[] tempiter = tuple.getTupleByteArray();
                         outputFile.insertRecord(tempiter);
@@ -178,6 +185,13 @@ public class PathExpressionOperator1
                 }
             }
         }
+
+    }
+
+    public void close() throws HFDiskMgrException, InvalidTupleSizeException, IOException, InvalidSlotNumberException, FileAlreadyDeletedException, HFBufMgrException {
+        outputFilescan.close();
+        outputFile.deleteFile();
+
     }
 
 }
