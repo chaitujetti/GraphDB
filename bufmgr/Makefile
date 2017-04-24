@@ -1,4 +1,4 @@
-JDKPATH = /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home
+JDKPATH = /usr/lib/jvm/java-8-openjdk-amd64
 LIBPATH = .:..
 CLASSPATH = $(JDKPATH)/lib/classes.zip:.:..:$(LIBPATH)
 BINPATH = $(JDKPATH)/bin

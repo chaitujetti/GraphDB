@@ -16,14 +16,17 @@ public class PathExpressionOperator3
     private RID root;
     private String rootLabel="";
     private int flag;
-    private int maxNumEdges;
-    private int maxTotalEdgeWeight;
+//    private int maxNumEdges;
+//    private int maxTotalEdgeWeight;
+    private int maxBound;
     private int condition;
 
     private NodeHeapfile nodeHeapFile;
     private EdgeHeapfile edgeHeapFile;
     private BTreeFile nodeIndexFile;
     private BTreeFile edgeSourceLabelIndexFile;
+
+    private FileScan outputFilescan;
 
     Heapfile outputFile;
 
@@ -43,26 +46,8 @@ public class PathExpressionOperator3
         outputFile = new Heapfile(outputHeapFileName);
     }
 
-    public FileScan findTailNodes(int value) throws Exception {
-        NID tempNID = new NID();
-        tempNID.pageNo.pid = root.pageNo.pid;
-        tempNID.slotNo = root.slotNo;
-        Node rootNode = nodeHeapFile.getNode(tempNID);
-        rootLabel=rootNode.getLabel();
-
-        if(condition==1)
-        {
-            maxNumEdges=value;
-            DFS_depth(root,1,0);
-        }
-
-        else
-        {
-            maxTotalEdgeWeight=value;
-            DFS_weight(root,1,0);
-        }
-
-
+    public FileScan getOutputFileScanObject()
+    {
         FldSpec [] Sprojection = new FldSpec[1];
         Sprojection[0] = new FldSpec(new RelSpec(RelSpec.outer), 1);
 
@@ -72,23 +57,34 @@ public class PathExpressionOperator3
         short [] Ssizes = new short [1];
         Ssizes[0] = 10;
 
-        FileScan am = null;
+        //FileScan am = null;
         try {
-            am  = new FileScan(outputFile._fileName, types, Ssizes,
+            outputFilescan  = new FileScan(outputFile._fileName, types, Ssizes,
                     (short)1, (short)1,
                     Sprojection, null);
         }
         catch (Exception e) {
             System.err.println (""+e);
         }
-        return am;
+        return outputFilescan;
     }
 
-    public void DFS_weight(RID rid, int flag, int weight) throws Exception
+    public void findTailNodes(int value) throws Exception {
+        NID tempNID = new NID();
+        tempNID.pageNo.pid = root.pageNo.pid;
+        tempNID.slotNo = root.slotNo;
+        Node rootNode = nodeHeapFile.getNode(tempNID);
+        rootLabel=rootNode.getLabel();
+
+        maxBound = value;
+        DFS(root,1,0,condition);
+    }
+
+    public void DFS(RID rid, int flag, int weight, int boundType) throws Exception
     {
         if(flag==1) //Node Edge join
         {
-
+            System.out.println("QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;");
             IndexNestedLoopsJoins inlj = new IndexNestedLoopsJoins(1,nodeHeapFile, edgeHeapFile, edgeSourceLabelIndexFile, null,null, rid );
             RID innerRid = new RID();
             boolean indicate=true;
@@ -100,36 +96,45 @@ public class PathExpressionOperator3
                     EID eid = new EID();
                     eid.pageNo.pid = innerRid.pageNo.pid;
                     eid.slotNo = innerRid.slotNo;
-                    if((weight+edge.getWeight())<maxTotalEdgeWeight) {
+                    int edgeValue;
+                    if(boundType==1)
+                    {
+                        edgeValue = 1;
+                    }
+                    else
+                    {
+                        edgeValue = edge.getWeight();
+                    }
+                    if((weight+ edgeValue)<=maxBound) {
                         indicate = false;
-                        DFS_weight(innerRid, 2, weight + edge.getWeight());
+                        DFS(innerRid, 2, weight + edgeValue, boundType);
                     }
                 }
                 else {
-                  if(indicate)
-                  {
-                      //write to outputFile
-                      Tuple tuple = new Tuple();
+                    if(indicate)
+                    {
+                        //write to outputFile
+                        Tuple tuple = new Tuple();
 
-                      NID tail = new NID();
-                      tail.pageNo.pid = rid.pageNo.pid;
-                      tail.slotNo = rid.slotNo;
-                      Node tailNode = nodeHeapFile.getNode(tail);
+                        NID tail = new NID();
+                        tail.pageNo.pid = rid.pageNo.pid;
+                        tail.slotNo = rid.slotNo;
+                        Node tailNode = nodeHeapFile.getNode(tail);
 
-                      System.out.println("Tail Label:"+tailNode.getLabel());
-                      AttrType[] types= new AttrType[1];
-                      types[0] = new AttrType(AttrType.attrString);
-                      short [] Ssizes = new short [1];
-                      Ssizes[0] = 10;
-                      tuple.setHdr((short)1,types,Ssizes);
+                        //System.out.println("Tail Label:"+tailNode.getLabel());
+                        AttrType[] types= new AttrType[1];
+                        types[0] = new AttrType(AttrType.attrString);
+                        short [] Ssizes = new short [1];
+                        Ssizes[0] = 10;
+                        tuple.setHdr((short)1,types,Ssizes);
 
-                      String result = rootLabel+"_"+tailNode.getLabel();
-                      tuple.setStrFld(1,result);
-                      byte[] tempiter = tuple.getTupleByteArray();
-                      outputFile.insertRecord(tempiter);
-                  }
-                  else
-                      indicate=true;
+                        String result = rootLabel+"_"+tailNode.getLabel();
+                        tuple.setStrFld(1,result);
+                        byte[] tempiter = tuple.getTupleByteArray();
+                        outputFile.insertRecord(tempiter);
+                    }
+                    else
+                        indicate=true;
 
                     break;
                 }
@@ -137,6 +142,7 @@ public class PathExpressionOperator3
         }
         else    //Edge Node Join
         {
+            System.out.println("QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node");
             IndexNestedLoopsJoins inlj = new IndexNestedLoopsJoins(4,edgeHeapFile, nodeHeapFile, nodeIndexFile, null,null, rid );
             RID innerRid = new RID();
             while (true)
@@ -152,7 +158,7 @@ public class PathExpressionOperator3
                     RID tempRid = new RID();
                     tempRid.pageNo.pid = nid.pageNo.pid;
                     tempRid.slotNo = nid.slotNo;
-                    DFS_weight((RID) tempRid, 1, weight);
+                    DFS((RID) tempRid, 1, weight, boundType);
 
                 }
                 else
@@ -163,73 +169,10 @@ public class PathExpressionOperator3
         }
     }
 
-    public void DFS_depth(RID rid, int flag, int depth) throws Exception
-    {
-        if(flag==1) //Node Edge join
-        {
+    public void close() throws HFDiskMgrException, InvalidTupleSizeException, IOException, InvalidSlotNumberException, FileAlreadyDeletedException, HFBufMgrException {
+        outputFilescan.close();
+        outputFile.deleteFile();
 
-            IndexNestedLoopsJoins inlj = new IndexNestedLoopsJoins(1,nodeHeapFile, edgeHeapFile, edgeSourceLabelIndexFile, null,null, rid );
-            RID innerRid = new RID();
-
-            while (true)
-            {
-                Edge edge = (Edge)inlj.get_next(innerRid);
-                if (edge!=null)
-                {
-                    EID eid = new EID();
-                    eid.pageNo.pid = innerRid.pageNo.pid;
-                    eid.slotNo = innerRid.slotNo;
-                    DFS_depth(innerRid,2,depth+1);
-                }
-                else {
-                    break;
-                }
-            }
-        }
-        else    //Edge Node Join
-        {
-            IndexNestedLoopsJoins inlj = new IndexNestedLoopsJoins(4,edgeHeapFile, nodeHeapFile, nodeIndexFile, null,null, rid );
-            RID innerRid = new RID();
-            while (true)
-            {
-                Node node = (Node) inlj.get_next(innerRid);
-                if(node!=null)
-                {
-                    NID nid = new NID();
-                    nid.pageNo.pid = innerRid.pageNo.pid;
-                    nid.slotNo = innerRid.slotNo;
-
-                    if(depth<maxNumEdges) {
-                        RID tempRid = new RID();
-                        tempRid.pageNo.pid = nid.pageNo.pid;
-                        tempRid.slotNo = nid.slotNo;
-                        DFS_depth((RID) tempRid, 1, depth);
-                    }
-                    else
-                    {
-                        //write to outputFile
-                        Tuple tuple = new Tuple();
-                        System.out.println("TailNode's RID:"+Integer.toString(nid.pageNo.pid)+","+Integer.toString(nid.slotNo));
-                        Node node1 = nodeHeapFile.getNode(nid);
-                        System.out.println("Tail Label:"+node1.getLabel());
-                        AttrType[] types= new AttrType[1];
-                        types[0] = new AttrType(AttrType.attrString);
-                        short [] Ssizes = new short [1];
-                        Ssizes[0] = 10;
-                        tuple.setHdr((short)1,types,Ssizes);
-
-                        String result = rootLabel+"_"+node1.getLabel();
-                        tuple.setStrFld(1,result);
-                        byte[] tempiter = tuple.getTupleByteArray();
-                        outputFile.insertRecord(tempiter);
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
     }
 
 }
