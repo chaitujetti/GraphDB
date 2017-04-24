@@ -113,6 +113,7 @@ public class PathExpressionOperator1
     {
         if(flag==1) //Node Edge join
         {
+            System.out.println("QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;");
             IndexNestedLoopsJoins inlj = new IndexNestedLoopsJoins(1,nodeHeapFile, edgeHeapFile, edgeSourceLabelIndexFile, null,null, rid );
             RID innerRid = new RID();
             while (true)
@@ -136,10 +137,12 @@ public class PathExpressionOperator1
             CondExpr[] innerCond;
             if(token.getDesc()==null)
             {
+                System.out.println("QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Label = "+token.getLabel()+"; Project Node;");
                 innerCond = setNodeExpressions(token.getLabel());
             }
             else
             {
+                System.out.println("QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = ["+token.getDesc().get(0)+","+token.getDesc().get(1)+","+token.getDesc().get(2)+","+token.getDesc().get(3)+","+token.getDesc().get(4)+"]; Project Node");
                 innerCond = setNodeExpressions(token.getDesc());
             }
             IndexNestedLoopsJoins inlj = new IndexNestedLoopsJoins(4,edgeHeapFile, nodeHeapFile, nodeIndexFile, null,innerCond, rid );
@@ -163,9 +166,9 @@ public class PathExpressionOperator1
                     {
                         //write to outputFile
                         Tuple tuple = new Tuple();
-                        System.out.println("TailNode's RID:"+Integer.toString(nid.pageNo.pid)+","+Integer.toString(nid.slotNo));
+                        //System.out.println("TailNode's RID:"+Integer.toString(nid.pageNo.pid)+","+Integer.toString(nid.slotNo));
                         Node node1 = nodeHeapFile.getNode(nid);
-                        System.out.println("Tail Label:"+node1.getLabel());
+                        //System.out.println("Tail Label:"+node1.getLabel());
                         AttrType[] types= new AttrType[1];
                         types[0] = new AttrType(AttrType.attrString);
                         short [] Ssizes = new short [1];
@@ -173,7 +176,7 @@ public class PathExpressionOperator1
                         tuple.setHdr((short)1,types,Ssizes);
 
                         String result = rootLabel+"_"+node1.getLabel();
-                        System.out.println(result);
+                        //System.out.println(result);
                         tuple.setStrFld(1,result);
                         byte[] tempiter = tuple.getTupleByteArray();
                         outputFile.insertRecord(tempiter);

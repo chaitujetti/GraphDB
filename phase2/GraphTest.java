@@ -358,18 +358,33 @@ class GraphDriver {
                     System.out.print("Enter GRAPHDBNAME PathExpression:");
                     inp = scanner.nextLine();
                     varargs = inp.split(" ");
-                    if(dbcreated!=true)
+
+                    if (dbExists(varargs[0]) ==1){
+                        dbcreated=true;//check if DB file already exists
+                    }
+                    else dbcreated=false;
+                    if(dbcreated!=true)//db doesnt exist
                     {
                         systemdef=new SystemDefs(varargs[0],1000,256,"Clock");
                         systemdef.JavabaseDB.createIndexFiles(varargs[0]);
-                        dbcreated=true;
+                        //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                        //System.out.println(systemdef.JavabaseDB.db_name());
+                        //dbcreated=true;
                     }
-                    String[] input3= new String[2];
-                    input3[0]="L:0";
-                    input3[1]="W:70";
+                    else if (dbcreated==true && (systemdef==null)) {//db file exists,minibase restarted
+                        SystemDefs.MINIBASE_RESTART_FLAG=true;
+                        systemdef=new SystemDefs(varargs[0],1000,256,"Clock");
+                        //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                        //System.out.println(systemdef.JavabaseDB.db_name());
+                        systemdef.JavabaseDB.createIndexFiles(varargs[0]);
+                    }
+
+                    String[] input3= varargs[2].split("/");
+                    //input3[0]="L:0";
+                    //input3[1]="W:70";
                     
                     PathExpressionQuery3 pq3 = new PathExpressionQuery3(input3,systemdef.JavabaseDB);
-                    pq3.fetchAllTailLabels();
+                    pq3.fetchAllTailLabels(varargs[1]);
                     break;
 
                 case 10:

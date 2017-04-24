@@ -6,8 +6,8 @@
 JARFILES=bufmgr/*.class diskmgr/*.class global/*.class iterator/*.class\
          heap/*.class chainexception/*.class  btree/*.class index/*.class tests/*.class phase2/*.class
 
-JDKPATH = /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home
-LIBPATH = .:..
+JDKPATH = /usr/lib/jvm/java-8-openjdk-amd64
+LIBPATH = /usr/lib/jvm/java-8-openjdk-amd64/lib
 CLASSPATH = $(LIBPATH)
 BINPATH = $(JDKPATH)/bin
 JAVAC = $(JDKPATH)/bin/javac -classpath $(CLASSPATH)
@@ -17,7 +17,7 @@ DOCFILES=bufmgr diskmgr global chainexception heap btree iterator index
 
 ##############  update the above for each assignment in making
 
-ASSIGN=/Users/chaitanya/Code/DBMSI/Project/GraphDB
+ASSIGN=/home/bharath/DBMSI/Phase3/GraphDB
 LIBDIR=$(ASSIGN)/lib
 KEY=$(ASSIGN)/key
 SRC=$(ASSIGN)/src
@@ -37,6 +37,8 @@ db:
 	make -C heap
 	make -C index
 	make -C iterator
+	make -C operator
+	make -C query
 	# make -C zindex
 	# make -C ztree
 	make -C phase2

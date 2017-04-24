@@ -121,10 +121,12 @@ public class PathExpressionOperator2
             CondExpr[] innerCond;
             if(token.getLabel()==null)
             {
+                System.out.println("QP: IndexNestedLoopJoin Node|X|Edge , Join Condition is Node.Label=Edge.Source; Select Edge where Edge.weight<="+token.getMax_edge_weight()+"; Project Edge;");
                 innerCond = setEdgeExpressions(token.getMax_edge_weight());
             }
             else
             {
+                System.out.println("QP: IndexNestedLoopJoin Node|X|Edge , Join Condition is Node.Label=Edge.Source; Select Edge where Edge.Label = "+token.getLabel()+"; Project Edge;");
                 innerCond = setEdgeExpressions(token.getLabel());
             }
 
@@ -149,6 +151,7 @@ public class PathExpressionOperator2
         }
         else    //Edge Node Join
         {
+            System.out.println("QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node");
             IndexNestedLoopsJoins inlj = new IndexNestedLoopsJoins(4,edgeHeapFile, nodeHeapFile, nodeIndexFile, null,null, rid );
             RID innerRid = new RID();
             while (true)
