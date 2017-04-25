@@ -66,8 +66,8 @@ public class batchedgedelete implements GlobalConst{
         System.out.println("Edge count = " + systemdef.JavabaseDB.getEdgeCnt());
         System.out.println("Disk pages read =" + systemdef.JavabaseDB.getNoOfReads());
         System.out.println("Disk pages written =" + systemdef.JavabaseDB.getNoOfWrites());
-        System.out.println("Unique labels in the file =" + systemdef.JavabaseDB.getLabelCnt());
-
+        systemdef.JavabaseDB.flushCounters();
+        
         if(counter == content.size())
             return true;
         else return false;
