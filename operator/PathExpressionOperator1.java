@@ -26,6 +26,8 @@ public class PathExpressionOperator1
 
     private int position;
 
+    private short  stringSize;
+
     public PathExpressionOperator1(NodeRegEx[] nodeRegEx, RID firstNode, NodeHeapfile nodeHeapFile, EdgeHeapfile edgeHeapFile, BTreeFile nodeIndexFile, BTreeFile edgeSourceLabelIndexFile, String outputHeapFileName) throws IOException, HFException, HFBufMgrException, HFDiskMgrException {
         this.nodeRegEx=nodeRegEx;
         root = new RID();
@@ -39,6 +41,8 @@ public class PathExpressionOperator1
         position =0;
         outputFile = new Heapfile(outputHeapFileName);
         outputFilescan = null;
+
+        stringSize = 10;
     }
 
     public CondExpr[] setNodeExpressions(String label)
@@ -85,7 +89,7 @@ public class PathExpressionOperator1
         types[0] = new AttrType(AttrType.attrString);
 
         short [] Ssizes = new short [1];
-        Ssizes[0] = 10;
+        Ssizes[0] = stringSize;
 
         //FileScan am = null;
         try {
@@ -172,7 +176,7 @@ public class PathExpressionOperator1
                         AttrType[] types= new AttrType[1];
                         types[0] = new AttrType(AttrType.attrString);
                         short [] Ssizes = new short [1];
-                        Ssizes[0] = 10;
+                        Ssizes[0] = stringSize;
                         tuple.setHdr((short)1,types,Ssizes);
 
                         String result = rootLabel+"_"+node1.getLabel();
@@ -192,8 +196,13 @@ public class PathExpressionOperator1
     }
 
     public void close() throws HFDiskMgrException, InvalidTupleSizeException, IOException, InvalidSlotNumberException, FileAlreadyDeletedException, HFBufMgrException {
-        outputFilescan.close();
-        outputFile.deleteFile();
+        try {
+            outputFilescan.close();
+            outputFile.deleteFile();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

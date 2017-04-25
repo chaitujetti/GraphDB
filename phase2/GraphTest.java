@@ -286,7 +286,7 @@ class GraphDriver {
                         System.out.println("Disk pages written = "+ res[1]);*/
                     break;
                 case 7:
-                    System.out.print("Enter GRAPHDBNAME PathExpression:");
+                    System.out.print("Enter GRAPHDBNAME QueryType(a|b|c) PathExpression(Delimiter is /, L for label D for Descriptor):- ");
                     inp = scanner.nextLine();
                     varargs = inp.split(" ");
 
@@ -320,7 +320,7 @@ class GraphDriver {
                     break;
 
                 case 8:
-                    System.out.print("Enter GRAPHDBNAME PathExpression:");
+                    System.out.print("Enter GRAPHDBNAME QueryType(a|b|c) PathExpression(Delimiter is /, L for node and edge labels, D for Descriptor, W for weight):- ");
                     inp = scanner.nextLine();
                     varargs = inp.split(" ");
                     if (dbExists(varargs[0]) ==1){
@@ -355,7 +355,7 @@ class GraphDriver {
                     break;
 
                 case 9:
-                    System.out.print("Enter GRAPHDBNAME PathExpression:");
+                    System.out.print("Enter GRAPHDBNAME QueryType(a|b|c) PathExpression(Delimiter is /, L for node label, D for descriptor, W for weight, D for max no. of edges):- ");
                     inp = scanner.nextLine();
                     varargs = inp.split(" ");
 

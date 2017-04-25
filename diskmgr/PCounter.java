@@ -1,8 +1,8 @@
 package diskmgr;
 
 public class PCounter {
-    public static int rcounter;
-    public static int wcounter;
+    private static int rcounter;
+    private static int wcounter;
 
     public static void initialize() {
         rcounter = 0;
@@ -14,6 +14,18 @@ public class PCounter {
     }
     public static void writeIncrement() {
         wcounter++;
+    }
+    public static int getReadCount()
+    {
+        int readCount = rcounter;
+        rcounter=0;
+        return readCount;
+    }
+    public static int getWriteCount()
+    {
+        int writeCount = wcounter;
+        wcounter=0;
+        return writeCount;
     }
 
 }

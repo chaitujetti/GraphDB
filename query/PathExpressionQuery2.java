@@ -19,18 +19,23 @@ public class PathExpressionQuery2 {
 
     private EdgeRegEx[] nodePathExp;
     Heapfile output;
+    private GraphDB graphDB;
     NodeHeapfile nhf;
     EdgeHeapfile ehf;
     BTreeFile nodeIndexFile;
     BTreeFile edgeSourceLabelsIndexFile;
     NodeRegEx firstNode;
 
+    private short  stringSize;
+
     public PathExpressionQuery2(String[] input, GraphDB graphDB) throws IOException, HFException, HFBufMgrException, HFDiskMgrException {
         parseInput(input);
+        this.graphDB = graphDB;
         nhf = graphDB.getNhf();
         ehf = graphDB.getEhf();
         nodeIndexFile = graphDB.nodeLabels_BFile;
         edgeSourceLabelsIndexFile = graphDB.edgeSourceLabels_BFile;
+        stringSize = 10;
     }
 
     public void parseInput(String[] input)
@@ -85,6 +90,7 @@ public class PathExpressionQuery2 {
             while (tempFileScan!=null && (t=tempFileScan.get_next())!=null) {
                 System.out.println(t.getStrFld(1));
             }
+
         }
 
         if(queryType.equals("b")||queryType.equals("c"))
@@ -94,7 +100,7 @@ public class PathExpressionQuery2 {
             types[0] = new AttrType(AttrType.attrString);
 
             short[] Ssizes = new short[1];
-            Ssizes[0] = 10;
+            Ssizes[0] = stringSize;
             TupleOrder ascending = new TupleOrder(TupleOrder.Ascending);
             Sort sort_nodes = null;
             try {
@@ -102,6 +108,7 @@ public class PathExpressionQuery2 {
             } catch (Exception e) {
                 System.err.println("Error in Sort:" + e);
             }
+            //System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
 
             if(queryType.equals("b")) {
                 System.out.println("QP: Project Head and Tail Nodes");
@@ -109,6 +116,7 @@ public class PathExpressionQuery2 {
                 while ((t = sort_nodes.get_next()) != null) {
                     System.out.println(t.getStrFld(1));
                 }
+                //System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
             }
 
             if(queryType.equals("c")) {
@@ -122,10 +130,21 @@ public class PathExpressionQuery2 {
                         previousValue=currentValue;
                     }
                 }
+                //System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
             }
-            sort_nodes.close();
+            try {
+                sort_nodes.close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        tempFileScan.close();
+        try {
+            tempFileScan.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -153,8 +172,13 @@ public class PathExpressionQuery2 {
                 }
                 node = nscan.getNext(root);
             }
-            projectResult(pe2.getOutputFileScanObject(),queryType);
-            pe2.close();
+            System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
+            if(pe2!=null) {
+                projectResult(pe2.getOutputFileScanObject(), queryType);
+                pe2.close();
+            }
+            System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
+            nscan.closescan();
         }
 
         else
@@ -178,12 +202,15 @@ public class PathExpressionQuery2 {
                     //System.out.println("Temp RID:"+Integer.toString(tempRID.pageNo.pid)+","+Integer.toString(tempRID.slotNo));
                     pe2 = new PathExpressionOperator2(nodePathExp,tempRID,nhf, ehf, nodeIndexFile, edgeSourceLabelsIndexFile, "TemporaryOutput");
                     pe2.findTailNodes();
+                    System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
                     projectResult(pe2.getOutputFileScanObject(),queryType);
                     pe2.close();
+                    System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
                     break; //////Should be there in both query types
                 }
                 node = nscan.getNext(root);
             }
+            nscan.closescan();
         }
     }
 }

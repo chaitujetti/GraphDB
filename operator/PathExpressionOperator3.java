@@ -1,6 +1,7 @@
 package operator;
 
 import btree.BTreeFile;
+import diskmgr.GraphDB;
 import heap.*;
 import iterator.*;
 import global.*;
@@ -32,6 +33,8 @@ public class PathExpressionOperator3
 
     private int position;
 
+    private short  stringSize;
+
     public PathExpressionOperator3(int condition, RID firstNode, NodeHeapfile nodeHeapFile, EdgeHeapfile edgeHeapFile, BTreeFile nodeIndexFile, BTreeFile edgeSourceLabelIndexFile, String outputHeapFileName) throws IOException, HFException, HFBufMgrException, HFDiskMgrException {
         root = new RID();
         root.pageNo.pid = firstNode.pageNo.pid;
@@ -44,6 +47,8 @@ public class PathExpressionOperator3
         position =0;
         this.condition=condition;
         outputFile = new Heapfile(outputHeapFileName);
+
+        stringSize = 10;
     }
 
     public FileScan getOutputFileScanObject()
@@ -55,7 +60,7 @@ public class PathExpressionOperator3
         types[0] = new AttrType(AttrType.attrString);
 
         short [] Ssizes = new short [1];
-        Ssizes[0] = 10;
+        Ssizes[0] = stringSize;
 
         //FileScan am = null;
         try {
@@ -125,7 +130,7 @@ public class PathExpressionOperator3
                         AttrType[] types= new AttrType[1];
                         types[0] = new AttrType(AttrType.attrString);
                         short [] Ssizes = new short [1];
-                        Ssizes[0] = 10;
+                        Ssizes[0] = stringSize;
                         tuple.setHdr((short)1,types,Ssizes);
 
                         String result = rootLabel+"_"+tailNode.getLabel();
@@ -170,8 +175,13 @@ public class PathExpressionOperator3
     }
 
     public void close() throws HFDiskMgrException, InvalidTupleSizeException, IOException, InvalidSlotNumberException, FileAlreadyDeletedException, HFBufMgrException {
-        outputFilescan.close();
-        outputFile.deleteFile();
+        try {
+            outputFilescan.close();
+            outputFile.deleteFile();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
