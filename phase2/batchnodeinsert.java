@@ -2,11 +2,13 @@ package phase2;
 
 import diskmgr.*;
 import bufmgr.*;
+import btree.*;
+import heap.*;
+
 import global.Descriptor;
 import global.GlobalConst;
 import global.NID;
 import global.SystemDefs;
-import heap.*;
 import tests.TestDriver;
 
 import java.io.BufferedReader;
@@ -67,7 +69,7 @@ public class batchnodeinsert extends TestDriver implements GlobalConst
         System.out.println("Edge count = " + systemdef.JavabaseDB.getEdgeCnt());
         System.out.println("Disk pages read =" + systemdef.JavabaseDB.getNoOfReads());
         System.out.println("Disk pages written =" + systemdef.JavabaseDB.getNoOfWrites());
-        System.out.println("Unique labels in the file =" + systemdef.JavabaseDB.getLabelCnt());
+        systemdef.JavabaseDB.flushCounters();
 
         if(counter == content.size())
             return true;
@@ -75,24 +77,15 @@ public class batchnodeinsert extends TestDriver implements GlobalConst
     }
 
     public static boolean checkNodeExists(String node, SystemDefs systemdef)
-        throws IOException, InvalidTupleSizeException, InvalidTypeException, FieldNumberOutOfBoundException
+        throws IOException, InvalidTupleSizeException, InvalidTypeException,
+        FieldNumberOutOfBoundException, ScanIteratorException, KeyNotMatchException, 
+        IteratorException, ConstructPageException, PinPageException, UnpinPageException,
+        InvalidFrameNumberException, ReplacerException, PageUnpinnedException,
+        HashEntryNotFoundException
     {
-        NScan nodescan = systemdef.JavabaseDB.getNhf().openScan();
-        NID start_nid = new NID();
-        Node current_node;
-        boolean existingNode = false;
-
-        while (!existingNode) {
-            current_node = nodescan.getNext(start_nid);
-            if(current_node==null){
-                break;
-            }
-            if (current_node.getLabel().equals(node)) {
-                existingNode = true;
-                nodescan.closescan();
-            }
-        }
-
-        return existingNode;
+        BTFileScan nodeScan = systemdef.JavabaseDB.getNodeIndex().new_scan(new StringKey(node), new StringKey(node));
+        boolean nodeExists = (nodeScan.get_next() != null);
+        nodeScan.DestroyBTreeFileScan();
+        return nodeExists;
     }
 }
