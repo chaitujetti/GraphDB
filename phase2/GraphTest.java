@@ -387,6 +387,32 @@ class GraphDriver {
                      break;
 
                 case 8:
+                    System.out.print("Enter GRAPHDBNAME OPTION EN;EN;EN ");
+                    inp = scanner.nextLine();
+                    varargs = inp.split(" ");
+                    if (dbExists(varargs[0]) ==1){
+                        dbcreated=true;//check if DB file already exists
+                    }
+                    else dbcreated=false;
+                    if(dbcreated!=true)//db doesnt exist
+                    {
+                        systemdef=new SystemDefs(varargs[0],1000,1024,"Clock");
+                        systemdef.JavabaseDB.createIndexFiles(varargs[0]);
+                        //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                        //System.out.println(systemdef.JavabaseDB.db_name());
+                        //dbcreated=true;
+                    }
+                    else if (dbcreated==true && (systemdef==null)) {//db file exists,minibase restarted
+                        SystemDefs.MINIBASE_RESTART_FLAG=true;
+                        systemdef=new SystemDefs(varargs[0],1000,1024,"Clock");
+                        //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                        //System.out.println(systemdef.JavabaseDB.db_name());
+                        systemdef.JavabaseDB.createIndexFiles(varargs[0]);
+                    }
+                    String input10 = varargs[1];
+                    input10 = "L:1;L:2;L:3";
+                    TriangleQuery tq = new TriangleQuery(systemdef,input10);
+
                     break;
 
                 case 9:

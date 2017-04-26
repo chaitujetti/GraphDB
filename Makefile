@@ -39,7 +39,10 @@ db:
 	make -C iterator
 	# make -C zindex
 	# make -C ztree
+	make -C query
+	make -C operator
 	make -C phase2
+
 	
 doc:
 	$(JAVADOC) $(DOCFILES)
