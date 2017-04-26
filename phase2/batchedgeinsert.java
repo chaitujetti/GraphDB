@@ -8,6 +8,7 @@ import diskmgr.*;
 import bufmgr.*;
 import global.*;
 import heap.*;
+import btree.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -74,58 +75,64 @@ public class batchedgeinsert implements GlobalConst
         System.out.println("Edge count = "+ systemdef.JavabaseDB.getEdgeCnt());
         System.out.println("Disk pages read ="+ systemdef.JavabaseDB.getNoOfReads());
         System.out.println("Disk pages written ="+ systemdef.JavabaseDB.getNoOfWrites());
-        System.out.println("Unique labels in the file ="+ systemdef.JavabaseDB.getLabelCnt());
-
+        systemdef.JavabaseDB.flushCounters();
+        
         if(counter == content.size())
             return true;
         else 
             return false;
     }
 
-    public static NID getNID(String node, SystemDefs systemdef)
-        throws IOException, InvalidTupleSizeException, InvalidTypeException, FieldNumberOutOfBoundException
+    public static boolean checkEdgeExists(String source, String destination, String edgeLabel, SystemDefs systemdef)
+        throws IOException, InvalidTupleSizeException, InvalidTypeException,
+        FieldNumberOutOfBoundException, ScanIteratorException, KeyNotMatchException, 
+        IteratorException, ConstructPageException, PinPageException, UnpinPageException,
+        InvalidFrameNumberException, ReplacerException, PageUnpinnedException,
+        HashEntryNotFoundException
     {
-        NScan nodescan = systemdef.JavabaseDB.getNhf().openScan();
-        NID start_nid = new NID();
-        NID nodeId = new NID();
-        Node current_node;
-        boolean existingNode = false;
+        BTFileScan edgeScan = systemdef.JavabaseDB.getEdgeIndex().new_scan(new StringKey(edgeLabel), new StringKey(edgeLabel));
+        boolean edgeExists = (edgeScan.get_next() != null);
+        edgeScan.DestroyBTreeFileScan();
+        // BTFileScan edgeScan = systemdef.JavabaseDB.getEdgeSourceIndex().new_scan(new StringKey(source), new StringKey(source)).get_next();
+        // BTFileScan edgeScan = systemdef.JavabaseDB.getEdgeDestinationIndex().new_scan(new StringKey(destination), new StringKey(destination)).get_next();
+        // BTFileScan edgeScan = systemdef.JavabaseDB.getEdgeIndex().new_scan(new StringKey(edgeLabel), new StringKey(edgeLabel));
+        // KeyDataEntry entry = edgeScan.get_next();
+        // edgeScan.DestroyBTreeFileScan();
+        // EID edgeId = new EID();
+        // boolean edgeExists = false;
+        // if(entry != null) {
+        //     LeafData leafNode=(LeafData)entry.data;
+        //     RID record = leafNode.getData();
+        //     edgeId.pageNo.pid = record.pageNo.pid;
+        //     edgeId.slotNo = record.slotNo;
+        //     Edge edge=systemdef.JavabaseDB.getEhf().getEdge(edgeId);
+        //     if(edge.getLabel() == edgeLabel && edge.getSourceLabel() == source && edge.getDestinationLabel() == destination){
+        //         edgeExists = true;
+        //     }
+        // }
+        // return edgeExists;
+        // return (edgeScan.get_next() != null);
 
-        while (!existingNode) {
-            current_node = nodescan.getNext(start_nid);
-            if(current_node==null){
-                break;
-            }
-            if (current_node.getLabel().equals(node)) {
-                existingNode = true;
-                nodeId = new NID(new PageId(start_nid.pageNo.pid), start_nid.slotNo);
-                nodescan.closescan();
-            }
+        return edgeExists;
+    }
+
+    public static NID getNID(String node, SystemDefs systemdef)
+        throws IOException, InvalidTupleSizeException, InvalidTypeException, 
+        FieldNumberOutOfBoundException, ScanIteratorException, KeyNotMatchException,
+        IteratorException, ConstructPageException, PinPageException, UnpinPageException
+    {
+        BTFileScan nodescan = systemdef.JavabaseDB.getNodeIndex().new_scan(new StringKey(node), new StringKey(node));
+        KeyDataEntry entry = nodescan.get_next();
+        NID nodeId = new NID();
+
+        if(entry != null) {
+            LeafData leafNode=(LeafData)entry.data;
+            RID record = leafNode.getData();
+            nodeId.pageNo.pid = record.pageNo.pid;
+            nodeId.slotNo = record.slotNo;
         }
 
         return nodeId;
-    }
-
-    public static boolean checkEdgeExists(String source, String destination, String edgeLabel, SystemDefs systemdef)
-        throws IOException, InvalidTupleSizeException, InvalidTypeException, FieldNumberOutOfBoundException
-    {
-        EScan edgescan = systemdef.JavabaseDB.getEhf().openScan();
-        EID start_eid = new EID();
-        Edge current_edge = new Edge();
-        boolean existingEdge = false;
-
-        while (!existingEdge) {
-            current_edge = edgescan.getNext(start_eid);
-            if(current_edge == null){
-                break;
-            }
-            if (current_edge.getLabel().equals(edgeLabel) && current_edge.getSourceLabel().equals(source) && current_edge.getDestinationLabel().equals(destination)) {
-                existingEdge = true;
-                edgescan.closescan();
-            }
-        }
-
-        return existingEdge;
     }
 }
 

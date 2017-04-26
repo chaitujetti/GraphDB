@@ -54,11 +54,6 @@ public class GraphDB extends DB
     public int GraphID;
     public int type;
 
-    public HashMap<String,Integer> hashLabelsPresent;
-    public HashMap<String,Integer> hashSourceNodesPresent;
-    public HashMap<String,Integer> hashDestinationNodesPresent;
-
-
 
     public GraphDB(int type) throws InvalidSlotNumberException,InvalidTupleSizeException,HFException,
             HFBufMgrException,HFDiskMgrException,GetFileEntryException,ConstructPageException,IOException, ztree.AddFileEntryException,
@@ -69,10 +64,6 @@ public class GraphDB extends DB
         GraphID = Graphcounter;
         Graphcounter++;
         DBname = "DB_"+String.valueOf(GraphID);
-
-        hashSourceNodesPresent = new HashMap<>();
-        hashDestinationNodesPresent = new HashMap<>();
-        hashLabelsPresent = new HashMap<>();
 
         PCounter.initialize();
 
@@ -90,112 +81,13 @@ public class GraphDB extends DB
         edgeDestinationLabels_BFile=new BTreeFile("EdgeDestinationLabelsBtree_"+DBname,AttrType.attrString,100,1);
 
         edgeWeights_BFile=new BTreeFile("EdgeWeights_BFile_"+DBname,AttrType.attrInteger,100,0);
-        // edgeWeights_BFile=new BTreeFile("EdgeWeights_BFile_"+DBname,AttrType.attrString,100,1);
-    }
-
-    public int getNoOfReads()
-    {
-        return PCounter.rcounter;
-    }
-    public int getNoOfWrites()
-    {
-        return PCounter.wcounter;
-    }
-
-    public int getNodeCnt() throws InvalidSlotNumberException, InvalidTupleSizeException, HFException, HFBufMgrException, HFDiskMgrException, IOException {
-        return nhf.getNodeCnt();
-    }
-
-    public int getEdgeCnt() throws InvalidSlotNumberException, InvalidTupleSizeException, HFException, HFBufMgrException, HFDiskMgrException, IOException {
-        return ehf.getEdgeCnt();
-    }
-
-    public void updateNodeLabels(String label,int type) //hashLabelsPresent
-    {
-        if(type==0)//0 is insert
-        {
-            if(hashLabelsPresent.containsKey(label))
-            {
-                int val=hashLabelsPresent.get(label);
-                hashLabelsPresent.put(label,val+1);
-            }
-            else {
-                hashLabelsPresent.put(label,1);
-            }
-        }
-        else //delete
-        {
-            if(hashLabelsPresent.containsKey(label))
-            {
-                int val=hashLabelsPresent.get(label);
-                if(val==1)
-                {
-                    hashLabelsPresent.remove(label);
-                }
-                else
-                {
-                    hashLabelsPresent.put(label,val-1);
-                }
-            }
-        }
-    }
-
-    public int getLabelCnt() throws InvalidSlotNumberException,InvalidTupleSizeException,HFException,HFBufMgrException,HFDiskMgrException,Exception
-    {
-        return hashLabelsPresent.size();
-    }
-
-    public void updateEdgeNodeLabels(NID nid,HashMap<String,Integer> hashTable,int type)
-    {
-        int Pid=nid.pageNo.pid;
-        int slotid=nid.slotNo;
-        String nid_str=Integer.toString(Pid)+"_"+Integer.toString(slotid);
-        if(type==0)//0 is insert
-        {
-            if (hashTable.containsKey(nid_str))
-            {
-                int val=hashTable.get(nid_str);
-                hashTable.put(nid_str,val+1);
-            }
-            else{
-                hashTable.put(nid_str,1);
-            }
-        }
-        else //1 is delete
-        {
-            if (hashTable.containsKey(nid_str))
-            {
-                int val=hashTable.get(nid_str);
-                if(val==1){
-                    hashTable.remove(nid_str);
-                }
-                else {
-                    hashTable.put(nid_str,val-1);
-                }
-            }
-        }
-    }
-
-    public int getSourceCnt() throws
-            HFException,HFDiskMgrException,HFBufMgrException,IOException,InvalidSlotNumberException,InvalidTupleSizeException,FieldNumberOutOfBoundException
-    {
-        return hashSourceNodesPresent.size();
-    }
-
-
-    public int getDestinationCnt() throws
-            HFException,HFDiskMgrException,HFBufMgrException,IOException,InvalidSlotNumberException,InvalidTupleSizeException,FieldNumberOutOfBoundException
-    {
-        return hashDestinationNodesPresent.size();
     }
 
     public void insertNodeIntoGraphDB(byte[] nodeByteArray) throws Exception
     {
         NID nid=nhf.insertNode(nodeByteArray);
-        //System.out.println("NID data:"+nid.pageNo.pid+" "+nid.slotNo);
         Node node=nhf.getNode(nid);
         insertNodeIntoIndex(nid,node);
-        updateNodeLabels(node.getLabel(),0);//insert node
     }
 
     public void insertEdgeIntoGraphDB(byte[] edgeByteArray) throws Exception
@@ -207,8 +99,6 @@ public class GraphDB extends DB
         Node source=nhf.getNode(sourceNID);
         Node destination=nhf.getNode(destinationNID);
         insertEdgeIntoIndex(eid,edge,source,destination);
-        updateEdgeNodeLabels(sourceNID,hashSourceNodesPresent,0);
-        updateEdgeNodeLabels(destinationNID,hashDestinationNodesPresent,0);
     }
 
     public boolean deleteNodeFromGraphDB(NID nid) throws Exception
@@ -216,7 +106,6 @@ public class GraphDB extends DB
         try {
             Node node = nhf.getNode(nid);
             deleteNodeFromIndex(nid, node);
-            updateNodeLabels(node.getLabel(), 1);
             nhf.deleteNode(nid);
         }
         catch (Exception e){
@@ -234,8 +123,6 @@ public class GraphDB extends DB
             Node source = nhf.getNode(sourceNID);
             Node destination = nhf.getNode(destinationNID);
             deleteEdgeFromIndex(eid, edge, source, destination);
-            updateEdgeNodeLabels(sourceNID, hashSourceNodesPresent, 1);
-            updateEdgeNodeLabels(destinationNID, hashDestinationNodesPresent, 1);
             ehf.deleteEdge(eid);
             
             return true;
@@ -256,10 +143,7 @@ public class GraphDB extends DB
         String destinationLabel=destination.getLabel();
         edgeDestinationLabels_BFile.insert(new StringKey(destinationLabel),eid/*edge.getDestination()*/);
         int weights=edge.getWeight();
-        // edgeWeights_BFile.insert(new StringKey(Integer.toString(weights)), eid);
         edgeWeights_BFile.insert(new IntegerKey(weights), eid);
-        updateEdgeNodeLabels(edge.getSource(),hashSourceNodesPresent,0);//Insert Source Node
-        updateEdgeNodeLabels(edge.getDestination(),hashDestinationNodesPresent,0);//Insert Destination Node
     }
 
     public void deleteEdgeFromIndex(EID eid,Edge edge,Node source,Node destination) throws IOException, FieldNumberOutOfBoundException, DeleteFashionException,
@@ -275,8 +159,6 @@ public class GraphDB extends DB
         edgeDestinationLabels_BFile.Delete(new StringKey(destinationLabel),edge.getDestination());
         int weights=edge.getWeight();
         edgeWeights_BFile.Delete(new IntegerKey(weights), eid);
-        updateEdgeNodeLabels(edge.getSource(),hashSourceNodesPresent,1);//Delete Source Node
-        updateEdgeNodeLabels(edge.getDestination(),hashDestinationNodesPresent,1);//Delete Destination Node
     }
 
     public void insertNodeIntoIndex(NID nid,Node node) throws FieldNumberOutOfBoundException, KeyTooLongException, KeyNotMatchException, LeafInsertRecException, IndexInsertRecException, ConstructPageException, UnpinPageException,
@@ -300,7 +182,6 @@ public class GraphDB extends DB
         String label=node.getLabel();
         nodeLabels_BFile.Delete(new StringKey(label),nid);
         Descriptor desc=node.getDesc();
-        updateNodeLabels(label,1);//delete node
     }
 
     public NodeHeapfile getNhf () {
@@ -309,6 +190,44 @@ public class GraphDB extends DB
 
     public EdgeHeapfile getEhf () {
         return ehf;
+    }
+
+    public BTreeFile getNodeIndex() {
+        return nodeLabels_BFile;
+    }
+
+    public BTreeFile getEdgeSourceIndex() {
+        return edgeSourceLabels_BFile;
+    } 
+
+    public BTreeFile getEdgeDestinationIndex() {
+        return edgeDestinationLabels_BFile;
+    } 
+
+    public BTreeFile getEdgeIndex() {
+        return edgeLabels_BFile;
+    } 
+
+    public int getNoOfReads()
+    {
+        return PCounter.rcounter;
+    }
+    
+    public int getNoOfWrites()
+    {
+        return PCounter.wcounter;
+    }
+
+    public void flushCounters(){
+        PCounter.flushCounters();
+    }
+
+    public int getNodeCnt() throws InvalidSlotNumberException, InvalidTupleSizeException, HFException, HFBufMgrException, HFDiskMgrException, IOException {
+        return nhf.getNodeCnt();
+    }
+
+    public int getEdgeCnt() throws InvalidSlotNumberException, InvalidTupleSizeException, HFException, HFBufMgrException, HFDiskMgrException, IOException {
+        return ehf.getEdgeCnt();
     }
 
 }

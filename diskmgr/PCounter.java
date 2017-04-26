@@ -16,4 +16,9 @@ public class PCounter {
         wcounter++;
     }
 
+    public static void flushCounters(){
+        rcounter = 0;
+        wcounter = 0;
+    }
+
 }
