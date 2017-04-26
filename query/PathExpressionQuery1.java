@@ -92,27 +92,33 @@ public class PathExpressionQuery1 {
             }
             //System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
 
-            if(queryType.equals("b")) {
-                System.out.println("QP: Project Head and Tail Nodes");
-                Tuple t;
-                while ((t = sort_nodes.get_next()) != null) {
-                    System.out.println(t.getStrFld(1));
-                }
-                //System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
-            }
-
-            if(queryType.equals("c")) {
-                System.out.println("QP: Project Distict pairs of Head and Tail Nodes");
-                Tuple t;
-                String previousValue="";
-                while ((t = sort_nodes.get_next()) != null) {
-                    String currentValue = t.getStrFld(1);
-                    if(!currentValue.equals(previousValue)) {
-                        System.out.println(currentValue);
-                        previousValue=currentValue;
+            if(sort_nodes!=null) {
+                if (queryType.equals("b")) {
+                    System.out.println("QP: Project Head and Tail Nodes");
+                    Tuple t;
+                    while ((t = sort_nodes.get_next()) != null) {
+                        System.out.println(t.getStrFld(1));
                     }
+                    //System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
                 }
-                //System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
+
+                if (queryType.equals("c")) {
+                    System.out.println("QP: Project Distict pairs of Head and Tail Nodes");
+                    Tuple t;
+                    String previousValue = "";
+                    while ((t = sort_nodes.get_next()) != null) {
+                        String currentValue = t.getStrFld(1);
+                        if (!currentValue.equals(previousValue)) {
+                            System.out.println(currentValue);
+                            previousValue = currentValue;
+                        }
+                    }
+                    //System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
+                }
+            }
+            else
+            {
+                System.out.println("Projection failed as Sort failed");
             }
             try {
                 sort_nodes.close();
@@ -165,11 +171,13 @@ public class PathExpressionQuery1 {
                 node = nscan.getNext(root);
             }
             System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
+            graphDB.flushCounters();
             if(pe1!=null) {
                 projectResult(pe1.getOutputFileScanObject(), queryType);
                 pe1.close();
             }
             System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
+            graphDB.flushCounters();
             nscan.closescan();
         }
 
@@ -192,9 +200,11 @@ public class PathExpressionQuery1 {
                     PathExpressionOperator1 pe1 = new PathExpressionOperator1(nodeRegExFromSecond,tempRID,nhf, ehf, nodeIndexFile, edgeSourceLabelsIndexFile, "TemporaryOutput");
                     pe1.findTailNodes();
                     System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
+                    graphDB.flushCounters();
                     projectResult(pe1.getOutputFileScanObject(),queryType);
                     pe1.close();
                     System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
+                    graphDB.flushCounters();
                     break; //////Should be there in both query types
                 }
                 node = nscan.getNext(root);

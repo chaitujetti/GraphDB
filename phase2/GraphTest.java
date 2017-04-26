@@ -75,7 +75,7 @@ class GraphDriver {
                     else dbcreated=false;
                     if(dbcreated!=true)//db doesnt exist
                     {
-                        systemdef=new SystemDefs(varargs[1],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[1],1000,1024,"Clock");
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
                         //System.out.println(systemdef.JavabaseDB.db_name());
@@ -83,7 +83,7 @@ class GraphDriver {
                     }
                     else if (dbcreated==true && (systemdef==null)) {//db file exists,minibase restarted
                         SystemDefs.MINIBASE_RESTART_FLAG=true;
-                        systemdef=new SystemDefs(varargs[1],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[1],1000,1024,"Clock");
                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
                         //System.out.println(systemdef.JavabaseDB.db_name());
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
@@ -110,7 +110,7 @@ class GraphDriver {
                     else dbcreated=false;
                     if(dbcreated!=true)//db doesnt exist
                     {
-                        systemdef=new SystemDefs(varargs[1],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[1],1000,1024,"Clock");
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
                         //System.out.println(systemdef.JavabaseDB.db_name());
@@ -118,7 +118,7 @@ class GraphDriver {
                     }
                     else if (dbcreated==true && (systemdef==null)) {//db file exists,minibase restarted
                         SystemDefs.MINIBASE_RESTART_FLAG=true;
-                        systemdef=new SystemDefs(varargs[1],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[1],1000,1024,"Clock");
                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
                         //System.out.println(systemdef.JavabaseDB.db_name());
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
@@ -141,7 +141,7 @@ class GraphDriver {
                     else dbcreated=false;
                     if(dbcreated!=true)//db doesnt exist
                     {
-                        systemdef=new SystemDefs(varargs[1],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[1],1000,1024,"Clock");
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
                         //System.out.println(systemdef.JavabaseDB.db_name());
@@ -149,7 +149,7 @@ class GraphDriver {
                     }
                     else if (dbcreated==true && (systemdef==null)) {//db file exists,minibase restarted
                         SystemDefs.MINIBASE_RESTART_FLAG=true;
-                        systemdef=new SystemDefs(varargs[1],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[1],1000,1024,"Clock");
                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
                         //System.out.println(systemdef.JavabaseDB.db_name());
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
@@ -173,7 +173,7 @@ class GraphDriver {
 
                     if(dbcreated!=true)//db doesnt exist
                     {
-                        systemdef=new SystemDefs(varargs[1],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[1],1000,1024,"Clock");
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
                         //System.out.println(systemdef.JavabaseDB.db_name());
@@ -181,7 +181,7 @@ class GraphDriver {
                     }
                     else if (dbcreated==true && (systemdef==null)) {//db file exists,minibase restarted
                         SystemDefs.MINIBASE_RESTART_FLAG=true;
-                        systemdef=new SystemDefs(varargs[1],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[1],1000,1024,"Clock");
                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
                         //System.out.println(systemdef.JavabaseDB.db_name());
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
@@ -206,7 +206,7 @@ class GraphDriver {
                     varargs = inp.split(" ");
                     if(dbcreated!=true)
                     {
-                        systemdef=new SystemDefs(varargs[1],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[1],1000,1024,"Clock");
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
                         dbcreated=true;
                     }
@@ -246,7 +246,7 @@ class GraphDriver {
                     varargs = inp.split(" ");
                     if(dbcreated!=true)
                     {
-                        systemdef=new SystemDefs(varargs[0],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[0],1000,1024,"Clock");
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
                         dbcreated=true;
                     }
@@ -286,7 +286,7 @@ class GraphDriver {
                         System.out.println("Disk pages written = "+ res[1]);*/
                     break;
                 case 7:
-                    System.out.print("Enter GRAPHDBNAME PathExpression:");
+                    System.out.print("Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/,L-labels,D-Descriptor):");
                     inp = scanner.nextLine();
                     varargs = inp.split(" ");
 
@@ -296,7 +296,7 @@ class GraphDriver {
                     else dbcreated=false;
                     if(dbcreated!=true)//db doesnt exist
                     {
-                        systemdef=new SystemDefs(varargs[0],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[0],1000,1024,"Clock");
                         systemdef.JavabaseDB.createIndexFiles(varargs[1]);
                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
                         //System.out.println(systemdef.JavabaseDB.db_name());
@@ -304,7 +304,7 @@ class GraphDriver {
                     }
                     else if (dbcreated==true && (systemdef==null)) {//db file exists,minibase restarted
                         SystemDefs.MINIBASE_RESTART_FLAG=true;
-                        systemdef=new SystemDefs(varargs[0],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[0],1000,1024,"Clock");
                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
                         //System.out.println(systemdef.JavabaseDB.db_name());
                         systemdef.JavabaseDB.createIndexFiles(varargs[0]);
@@ -320,7 +320,7 @@ class GraphDriver {
                     break;
 
                 case 8:
-                    System.out.print("Enter GRAPHDBNAME PathExpression:");
+                    System.out.print("Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/, L-node/edge labels,D-Descriptor,W-max_edge_weight):");
                     inp = scanner.nextLine();
                     varargs = inp.split(" ");
                     if (dbExists(varargs[0]) ==1){
@@ -329,7 +329,7 @@ class GraphDriver {
                     else dbcreated=false;
                     if(dbcreated!=true)//db doesnt exist
                     {
-                        systemdef=new SystemDefs(varargs[0],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[0],1000,1024,"Clock");
                         systemdef.JavabaseDB.createIndexFiles(varargs[0]);
                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
                         //System.out.println(systemdef.JavabaseDB.db_name());
@@ -337,7 +337,7 @@ class GraphDriver {
                     }
                     else if (dbcreated==true && (systemdef==null)) {//db file exists,minibase restarted
                         SystemDefs.MINIBASE_RESTART_FLAG=true;
-                        systemdef=new SystemDefs(varargs[0],1000,512,"Clock");
+                        systemdef=new SystemDefs(varargs[0],1000,1024,"Clock");
                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
                         //System.out.println(systemdef.JavabaseDB.db_name());
                         systemdef.JavabaseDB.createIndexFiles(varargs[0]);
@@ -353,23 +353,37 @@ class GraphDriver {
                     PathExpressionQuery2 pq2 = new PathExpressionQuery2(input2,systemdef.JavabaseDB);
                     pq2.fetchAllTailLabels(varargs[1]);
                     break;
-//                 case 9:
-//                     System.out.print("Enter GRAPHDBNAME PathExpression:");
-//                     inp = scanner.nextLine();
-//                     varargs = inp.split(" ");
-//                     if(dbcreated!=true)
-//                     {
-//                         systemdef=new SystemDefs(varargs[0],1000,256,"Clock");
-//                         systemdef.JavabaseDB.createIndexFiles(varargs[0]);
-//                         dbcreated=true;
-//                     }
-//                     String[] input3= new String[2];
-//                     input3[0]="L:0";
-//                     input3[1]="W:70";
+                 case 9:
+                     System.out.print("Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/, L-node label,D-Descriptor,W-max_edge_weight, D-Max_num_edges):");
+                     inp = scanner.nextLine();
+                     varargs = inp.split(" ");
+                     if (dbExists(varargs[0]) ==1){
+                         dbcreated=true;//check if DB file already exists
+                     }
+                     else dbcreated=false;
+                     if(dbcreated!=true)//db doesnt exist
+                     {
+                         systemdef=new SystemDefs(varargs[0],1000,1024,"Clock");
+                         systemdef.JavabaseDB.createIndexFiles(varargs[0]);
+                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                         //System.out.println(systemdef.JavabaseDB.db_name());
+                         //dbcreated=true;
+                     }
+                     else if (dbcreated==true && (systemdef==null)) {//db file exists,minibase restarted
+                         SystemDefs.MINIBASE_RESTART_FLAG=true;
+                         systemdef=new SystemDefs(varargs[0],1000,1024,"Clock");
+                         //System.out.println(systemdef.JavabaseDB.get_file_entry("NodeLabelsBtree_"+varargs[1]));
+                         //System.out.println(systemdef.JavabaseDB.db_name());
+                         systemdef.JavabaseDB.createIndexFiles(varargs[0]);
+                     }
+                     String[] input3= varargs[2].split("/");
+                     //String[] input3= new String[2];
+                     //input3[0]="L:0";
+                     //input3[1]="W:70";
                     
-//                     PathExpressionQuery3 pq3 = new PathExpressionQuery3(input3,systemdef.JavabaseDB);
-//                     pq3.fetchAllTailLabels();
-//                     break;
+                     PathExpressionQuery3 pq3 = new PathExpressionQuery3(input3,systemdef.JavabaseDB);
+                     pq3.fetchAllTailLabels(varargs[1]);
+                     break;
 
                 case 10:
                     try {
