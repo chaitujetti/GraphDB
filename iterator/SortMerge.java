@@ -85,10 +85,6 @@ public class SortMerge extends Iterator implements GlobalConst
 		   boolean     in2_sorted,                
 		   TupleOrder order,
 
-
-		   double distance,
-           Descriptor target,
-
 		   CondExpr  outFilter[],
 		   FldSpec   proj_list[],
 		   int       n_out_flds
@@ -134,7 +130,7 @@ public class SortMerge extends Iterator implements GlobalConst
 		if    (!in1_sorted){
 			try {
 				p_i1 = new Sort(in1, (short)len_in1, s1_sizes, am1, join_col_in1,
-						distance, target, order, sortFld1Len, amt_of_mem / 2);
+						order, sortFld1Len, amt_of_mem / 2);
 			}catch(Exception e){
 				throw new SortException (e, "Sort failed");
 			}
@@ -143,7 +139,7 @@ public class SortMerge extends Iterator implements GlobalConst
 		if (! in2_sorted){
 			try {
 				p_i2 = new Sort(in2, (short)len_in2, s2_sizes, am2, join_col_in2,
-						distance, target, order, sortFld2Len, amt_of_mem / 2);
+						order, sortFld2Len, amt_of_mem / 2);
 			}catch(Exception e){
 				throw new SortException (e, "Sort failed");
 			}
