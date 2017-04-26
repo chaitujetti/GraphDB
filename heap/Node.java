@@ -20,13 +20,13 @@ public class Node extends Tuple
     public Node() throws IOException, InvalidTypeException, InvalidTupleSizeException
     {
         super();
-        setHdr(numFld, types, sizes);
+        this.setHdr(numFld, types, sizes);  //Changed now
     }
 
-    public Node(Tuple tuple) throws IOException, InvalidTypeException, InvalidTupleSizeException
+    public Node(Tuple tuple) throws IOException, InvalidTypeException, InvalidTupleSizeException, FieldNumberOutOfBoundException
     {
         this.data = tuple.data;
-        setHdr(numFld, types, sizes);
+        this.setHdr(numFld, types, sizes);
     }
 
     public Node(Node node)
@@ -36,16 +36,19 @@ public class Node extends Tuple
         this.label = node.label;
     }
 
-    public Node(byte [] atuple, int offset) throws IOException, InvalidTypeException, InvalidTupleSizeException
+    public Node(byte [] atuple, int offset) throws IOException, InvalidTypeException, InvalidTupleSizeException, FieldNumberOutOfBoundException
     {
         super(atuple,offset,atuple.length);
-        setHdr(numFld, types, sizes);
+        this.setHdr(numFld, types, sizes);  //Changed now
+        this.setLabel(this.getStrFld(1));
+        this.setDesc(this.getDescFld(2));
     }
 
-    public Node(byte [] atuple, int offset, int length) throws IOException, InvalidTypeException, InvalidTupleSizeException
-    {
+    public Node(byte [] atuple, int offset, int length) throws IOException, InvalidTypeException, InvalidTupleSizeException, FieldNumberOutOfBoundException {
         super(atuple,offset,length);
-        setHdr(numFld, types, sizes);
+        this.setHdr(numFld, types, sizes);  //Changed now
+        this.setLabel(this.getStrFld(1));
+        this.setDesc(this.getDescFld(2));
     }
 
     public byte [] getNodeByteArray()
