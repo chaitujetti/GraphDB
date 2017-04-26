@@ -19,18 +19,23 @@ public class PathExpressionQuery2 {
 
     private EdgeRegEx[] nodePathExp;
     Heapfile output;
+    private GraphDB graphDB;
     NodeHeapfile nhf;
     EdgeHeapfile ehf;
     BTreeFile nodeIndexFile;
     BTreeFile edgeSourceLabelsIndexFile;
     NodeRegEx firstNode;
 
+    private short  stringSize;
+
     public PathExpressionQuery2(String[] input, GraphDB graphDB) throws IOException, HFException, HFBufMgrException, HFDiskMgrException {
         parseInput(input);
+        this.graphDB = graphDB;
         nhf = graphDB.getNhf();
         ehf = graphDB.getEhf();
         nodeIndexFile = graphDB.nodeLabels_BFile;
         edgeSourceLabelsIndexFile = graphDB.edgeSourceLabels_BFile;
+        stringSize = 10;
     }
 
     public void parseInput(String[] input)
@@ -50,7 +55,7 @@ public class PathExpressionQuery2 {
             for(int j=0;j<5;j++)
             {
                 vals[j]=Short.parseShort(tokens[j]);
-                System.out.println(vals[j]);
+                //System.out.println(vals[j]);
             }
             Descriptor desc = new Descriptor();
             desc.set(vals[0],vals[1],vals[2],vals[3],vals[4]);
@@ -80,20 +85,22 @@ public class PathExpressionQuery2 {
     public void projectResult(FileScan tempFileScan, String queryType) throws Exception {
         if(queryType.equals("a"))
         {
-            System.out.println("Unsorted Output");
+            System.out.println("QP: Project Head and Tail Nodes");
             Tuple t;
             while (tempFileScan!=null && (t=tempFileScan.get_next())!=null) {
                 System.out.println(t.getStrFld(1));
             }
+
         }
 
         if(queryType.equals("b")||queryType.equals("c"))
         {
+            System.out.println("QP: Sort Head and Tail Nodes in Ascending order");
             AttrType[] types = new AttrType[1];
             types[0] = new AttrType(AttrType.attrString);
 
             short[] Ssizes = new short[1];
-            Ssizes[0] = 10;
+            Ssizes[0] = stringSize;
             TupleOrder ascending = new TupleOrder(TupleOrder.Ascending);
             Sort sort_nodes = null;
             try {
@@ -101,17 +108,19 @@ public class PathExpressionQuery2 {
             } catch (Exception e) {
                 System.err.println("Error in Sort:" + e);
             }
+            //System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
 
             if(queryType.equals("b")) {
-                System.out.println("Sorted");
+                System.out.println("QP: Project Head and Tail Nodes");
                 Tuple t;
                 while ((t = sort_nodes.get_next()) != null) {
                     System.out.println(t.getStrFld(1));
                 }
+                //System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
             }
 
             if(queryType.equals("c")) {
-                System.out.println("Distinct");
+                System.out.println("QP: Project Distict pairs of Head and Tail Nodes");
                 Tuple t;
                 String previousValue="";
                 while ((t = sort_nodes.get_next()) != null) {
@@ -121,10 +130,21 @@ public class PathExpressionQuery2 {
                         previousValue=currentValue;
                     }
                 }
+                //System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
             }
-            sort_nodes.close();
+            try {
+                sort_nodes.close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        tempFileScan.close();
+        try {
+            tempFileScan.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -137,6 +157,7 @@ public class PathExpressionQuery2 {
             Node node;
             node = nscan.getNext(root);
             PathExpressionOperator2 pe2=null;
+            System.out.println("QP: Select Node where Descriptor=["+firstNodeDesc.get(0)+","+firstNodeDesc.get(1)+","+firstNodeDesc.get(2)+","+firstNodeDesc.get(3)+","+firstNodeDesc.get(4)+"]");
             while (node!=null)
             {
                 double isEquals = firstNodeDesc.equal(node.getDesc());
@@ -151,8 +172,13 @@ public class PathExpressionQuery2 {
                 }
                 node = nscan.getNext(root);
             }
-            projectResult(pe2.getOutputFileScanObject(),queryType);
-            pe2.close();
+            System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
+            if(pe2!=null) {
+                projectResult(pe2.getOutputFileScanObject(), queryType);
+                pe2.close();
+            }
+            System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
+            nscan.closescan();
         }
 
         else
@@ -163,6 +189,7 @@ public class PathExpressionQuery2 {
             Node node;
             node = nscan.getNext(root);
             PathExpressionOperator2 pe2=null;
+            System.out.println("QP: Select Node where Label="+firstNodeLabel);
             while (node!=null)
             {
                 //System.out.println(node.getLabel());
@@ -175,12 +202,15 @@ public class PathExpressionQuery2 {
                     //System.out.println("Temp RID:"+Integer.toString(tempRID.pageNo.pid)+","+Integer.toString(tempRID.slotNo));
                     pe2 = new PathExpressionOperator2(nodePathExp,tempRID,nhf, ehf, nodeIndexFile, edgeSourceLabelsIndexFile, "TemporaryOutput");
                     pe2.findTailNodes();
+                    System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
+                    projectResult(pe2.getOutputFileScanObject(),queryType);
+                    pe2.close();
+                    System.out.println("No. of Disk pages read:"+graphDB.getNoOfReads()+"; No. of Disk Pages written:"+graphDB.getNoOfWrites());
                     break; //////Should be there in both query types
                 }
                 node = nscan.getNext(root);
             }
-            projectResult(pe2.getOutputFileScanObject(),queryType);
-            pe2.close();
+            nscan.closescan();
         }
     }
 }

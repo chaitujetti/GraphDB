@@ -254,7 +254,7 @@ public class NHFPage extends HFPage{
      */
     public Node getNode ( NID nid )
             throws IOException, InvalidTupleSizeException,
-            InvalidSlotNumberException, InvalidTypeException
+            InvalidSlotNumberException, InvalidTypeException, FieldNumberOutOfBoundException
     {
         short recLen;
         short offset;
@@ -296,7 +296,7 @@ public class NHFPage extends HFPage{
      */
     public Node returnNode ( NID nid )
             throws IOException, InvalidTupleSizeException,
-            InvalidSlotNumberException, InvalidTypeException
+            InvalidSlotNumberException, InvalidTypeException, FieldNumberOutOfBoundException
     {
         short recLen;
         short offset;
