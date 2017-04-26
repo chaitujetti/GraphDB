@@ -42,8 +42,13 @@ public class IndexNestedLoopsJoins extends Iterator
 
     private int joinType;
 
+    private short  stringSize;
+
 
     public IndexNestedLoopsJoins(int joinType, Heapfile outerRelHeapFile, Heapfile innerRelHeapFile, BTreeFile innerRelIndexFile, CondExpr outerCondn[], CondExpr innerCondn[], RID outerRID) throws Exception, IOException, HFException, HFBufMgrException, HFDiskMgrException, ConstructPageException, GetFileEntryException, PinPageException, InvalidTupleSizeException {
+
+        stringSize = 10;
+
         this.joinType= joinType;
         this.outerCondn=outerCondn;
         this.innerCondn=innerCondn;
@@ -119,7 +124,7 @@ public class IndexNestedLoopsJoins extends Iterator
                 eid.pageNo.pid = rid.pageNo.pid;
                 eid.slotNo = rid.slotNo;
                 innerEdge = innerEdgeHF.getEdge(eid);
-                short[] strSizes = {10, 10, 10};    //Reference from global constant
+                short[] strSizes = {stringSize, stringSize, stringSize};    //Reference from global constant
                 innerEdge.setHdr((short) 8, edgeAttrs, strSizes);  //8 change in Edge.java
                 if (PredEval.Eval(innerCondn, null, innerEdge, null, edgeAttrs)) {
                     if (PredEval.Eval(outerCondn, outerNode, innerEdge, nodeAttrs, edgeAttrs)) {
@@ -145,7 +150,7 @@ public class IndexNestedLoopsJoins extends Iterator
                 nid.slotNo = rid.slotNo;
                 innerNode = innerNodeHF.getNode(nid);
 
-                short[] strSizes = {10};    //Reference from global constant
+                short[] strSizes = {stringSize};    //Reference from global constant
                 innerNode.setHdr((short) 2, nodeAttrs, strSizes);
                 if (PredEval.Eval(innerCondn, null, innerNode, null, nodeAttrs)) {
                     if (PredEval.Eval(outerCondn, outerEdge, innerNode, edgeAttrs, nodeAttrs)) {
