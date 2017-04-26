@@ -18,41 +18,9 @@ public class TriangleQuery implements GlobalConst{
 
     public TriangleQuery(SystemDefs systemdef,String query) throws Exception {
         //Extract condition expressions for queries
-        String[] queries;
-        queries = query.split(";");
-        String[][] label = new String[3][2];
-        label[0] = queries[0].split(":");
-        label[1] = queries[1].split(":");
-        label[2] = queries[2].split(":");
-        if(label[0][0].equals("L") && label[1][0].equals("L")){
-            String[] edge_label = new String[2];
-            edge_label[0] = label[0][1];
-            edge_label[1] = label[1][1];
-            expr1 = setCondExprLL(edge_label);
-        }
-        else if(label[0][0].equals("L") && label[1][0].equals("W")){
-            expr1 = setCondExprLW(label[0][1], Integer.parseInt(label[1][1]));
-        }
-        else if(label[0][0].equals("W") && label[1][0].equals("W")){
-            int[] weights = new int[2];
-            String label1 = label[0][1];
-            String label2 = label[1][1];
-            weights[0] = Integer.parseInt(label1);
-            weights[1] = Integer.parseInt(label2);
-            expr1 = setCondExprWW(weights);
-        }
-        else if(label[0][0].equals("W") && label[1][0].equals("L")){
-            expr1 = setCondExprWL(label[1][1], Integer.parseInt(label[0][1]));
-        }
-        else{
-            System.out.println("Queries not correct");
-        }
-        if(label[2][0].equals("L")){
-            expr2 = setCondExprL(label[2][1]);
-        }
-        else{
-            expr2 = setCondExprW(Integer.parseInt(label[2][1]));
-        }
+        String[] queries = query.split(";");
+        expr1 = condExpr1(queries[0], queries[1]);
+        expr2 = condExpr2(queries[2]);
 
         E1Type = new AttrType[8];
         E1Type[0] = new AttrType(AttrType.attrString);
@@ -110,6 +78,7 @@ public class TriangleQuery implements GlobalConst{
         if( sort1.get_next()== null) {
             System.out.println("sort1 is null");
         }
+        
         projection1 = new FldSpec[8];
         projection1[0] = new FldSpec(new RelSpec(RelSpec.outer), 1);
         projection1[1] = new FldSpec(new RelSpec(RelSpec.outer), 2);
@@ -172,8 +141,7 @@ public class TriangleQuery implements GlobalConst{
         }
     }
 
-    private static CondExpr[] setCondExprLL(String[] labels)
-    {
+    private static CondExpr[] condExpr1(String label1,String label2) {
         CondExpr[] expr= new CondExpr[4];
         expr[3] = null;
 
@@ -185,164 +153,73 @@ public class TriangleQuery implements GlobalConst{
         expr[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),2);
         expr[0].operand2.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),1);
 
+        String[] values = label1.split(":");
         expr[1] = new CondExpr();
         expr[1].next   = null;
         expr[1].op    = new AttrOperator(AttrOperator.aopEQ);
         expr[1].type1 = new AttrType(AttrType.attrSymbol);
-        expr[1].type2 = new AttrType(AttrType.attrString);
-        expr[1].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),3);
-        expr[1].operand2.string = labels[0];
-
+        if(values[0].equals("L")){
+            expr[1].type2 = new AttrType(AttrType.attrString);
+            expr[1].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),3);
+            expr[1].operand2.string = values[1];
+        } else {
+            expr[1].type2 = new AttrType(AttrType.attrInteger);
+            expr[1].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),4);
+            expr[1].operand2.integer = Integer.parseInt(values[1]);
+        }
+        
+        values = label2.split(":");
         expr[2] = new CondExpr();
         expr[2].next   = null;
         expr[2].op    = new AttrOperator(AttrOperator.aopEQ);
         expr[2].type1 = new AttrType(AttrType.attrSymbol);
-        expr[2].type2 = new AttrType(AttrType.attrString);
-        expr[2].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),3);
-        expr[2].operand2.string = labels[1];
+        if(values[0].equals("L")){
+            expr[2].type2 = new AttrType(AttrType.attrString);
+            expr[2].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),3);
+            expr[2].operand2.string = values[1];
+        } else {
+            expr[2].type2 = new AttrType(AttrType.attrInteger);
+            expr[2].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),4);
+            expr[2].operand2.integer = Integer.parseInt(values[1]);
+        }
 
         return expr;
     }
 
-    private static CondExpr[] setCondExprWW(int[] weights)
-    {
-        CondExpr[] expr= new CondExpr[4];
+    private static CondExpr[] condExpr2(String label){
+        CondExpr[] expr = new CondExpr[4];
         expr[3] = null;
-
+  
         expr[0] = new CondExpr();
         expr[0].next  = null;
         expr[0].op    = new AttrOperator(AttrOperator.aopEQ);
         expr[0].type1 = new AttrType(AttrType.attrSymbol);
         expr[0].type2 = new AttrType(AttrType.attrSymbol);
-        expr[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),2);
-        expr[0].operand2.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),1);
-
-        expr[1] = new CondExpr();
-        expr[1].next   = null;
-        expr[1].op    = new AttrOperator(AttrOperator.aopLE);
-        expr[1].type1 = new AttrType(AttrType.attrSymbol);
-        expr[1].type2 = new AttrType(AttrType.attrInteger);
-        expr[1].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),4);
-        expr[1].operand2.integer = weights[0];
-
-        expr[2] = new CondExpr();
-        expr[2].next   = null;
-        expr[2].op    = new AttrOperator(AttrOperator.aopLE);
-        expr[2].type1 = new AttrType(AttrType.attrSymbol);
-        expr[2].type2 = new AttrType(AttrType.attrInteger);
-        expr[2].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),4);
-        expr[2].operand2.integer = weights[1];
-
-        return expr;
-    }
-
-    private static CondExpr[] setCondExprLW(String label,int weight)
-    {
-        CondExpr[] expr= new CondExpr[4];
-        expr[3] = null;
-
-        expr[0] = new CondExpr();
-        expr[0].next  = null;
-        expr[0].op    = new AttrOperator(AttrOperator.aopEQ);
-        expr[0].type1 = new AttrType(AttrType.attrSymbol);
-        expr[0].type2 = new AttrType(AttrType.attrSymbol);
-        expr[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),2);
-        expr[0].operand2.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),1);
-
+        expr[0].operand2.symbol = new FldSpec (new RelSpec(RelSpec.outer),6);
+        expr[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),1);
+  
         expr[1] = new CondExpr();
         expr[1].next   = null;
         expr[1].op    = new AttrOperator(AttrOperator.aopEQ);
         expr[1].type1 = new AttrType(AttrType.attrSymbol);
-        expr[1].type2 = new AttrType(AttrType.attrString);
-        expr[1].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),3);
-        expr[1].operand2.string = label;
-
+        expr[1].type2 = new AttrType(AttrType.attrSymbol);
+        expr[1].operand2.symbol =  new FldSpec (new RelSpec(RelSpec.outer),1);
+        expr[1].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),2);
+  
+        String[] values = label.split(":");
         expr[2] = new CondExpr();
         expr[2].next   = null;
         expr[2].op    = new AttrOperator(AttrOperator.aopLE);
         expr[2].type1 = new AttrType(AttrType.attrSymbol);
-        expr[2].type2 = new AttrType(AttrType.attrInteger);
-        expr[2].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),4);
-        expr[2].operand2.integer = weight;
-
-        return expr;
-    }
-
-    private static CondExpr[] setCondExprWL(String label,int weight)
-    {
-        CondExpr[] expr= new CondExpr[4];
-        expr[3] = null;
-
-        expr[0] = new CondExpr();
-        expr[0].next  = null;
-        expr[0].op    = new AttrOperator(AttrOperator.aopEQ);
-        expr[0].type1 = new AttrType(AttrType.attrSymbol);
-        expr[0].type2 = new AttrType(AttrType.attrSymbol);
-        expr[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),2);
-        expr[0].operand2.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),1);
-
-        expr[1] = new CondExpr();
-        expr[1].next   = null;
-        expr[1].op    = new AttrOperator(AttrOperator.aopEQ);
-        expr[1].type1 = new AttrType(AttrType.attrSymbol);
-        expr[1].type2 = new AttrType(AttrType.attrString);
-        expr[1].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),3);
-        expr[1].operand2.string = label;
-
-        expr[2] = new CondExpr();
-        expr[2].next   = null;
-        expr[2].op    = new AttrOperator(AttrOperator.aopLE);
-        expr[2].type1 = new AttrType(AttrType.attrSymbol);
-        expr[2].type2 = new AttrType(AttrType.attrInteger);
-        expr[2].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),4);
-        expr[2].operand2.integer = weight;
-
-        return expr;
-    }
-    private static CondExpr[] setCondExprW(int weight)
-    {
-        CondExpr[] expr= new CondExpr[3];
-        expr[2] = null;
-
-        expr[0] = new CondExpr();
-        expr[0].next  = null;
-        expr[0].op    = new AttrOperator(AttrOperator.aopEQ);
-        expr[0].type1 = new AttrType(AttrType.attrSymbol);
-        expr[0].type2 = new AttrType(AttrType.attrSymbol);
-        expr[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),1);
-        expr[0].operand2.symbol = new FldSpec (new RelSpec(RelSpec.outer),6);
-
-        expr[1] = new CondExpr();
-        expr[1].next   = null;
-        expr[1].op    = new AttrOperator(AttrOperator.aopLE);
-        expr[1].type1 = new AttrType(AttrType.attrSymbol);
-        expr[1].type2 = new AttrType(AttrType.attrInteger);
-        expr[1].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),4);
-        expr[1].operand2.integer = weight;
-
-        return expr;
-    }
-
-    private static CondExpr[] setCondExprL(String label)
-    {
-        CondExpr[] expr= new CondExpr[3];
-        expr[2] = null;
-
-        expr[0] = new CondExpr();
-        expr[0].next  = null;
-        expr[0].op    = new AttrOperator(AttrOperator.aopEQ);
-        expr[0].type1 = new AttrType(AttrType.attrSymbol);
-        expr[0].type2 = new AttrType(AttrType.attrSymbol);
-        expr[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),1);
-        expr[0].operand2.symbol = new FldSpec (new RelSpec(RelSpec.outer),6);
-
-        expr[1] = new CondExpr();
-        expr[1].next   = null;
-        expr[1].op    = new AttrOperator(AttrOperator.aopLE);
-        expr[1].type1 = new AttrType(AttrType.attrSymbol);
-        expr[1].type2 = new AttrType(AttrType.attrString);
-        expr[1].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),3);
-        expr[1].operand2.string = label;
+        if(values[0].equals("L")){
+            expr[2].type2 = new AttrType(AttrType.attrString);
+            expr[2].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),3);
+            expr[2].operand2.string = values[1];
+        } else {
+            expr[2].type2 = new AttrType(AttrType.attrInteger);
+            expr[2].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),4);
+            expr[2].operand2.integer = Integer.parseInt(values[1]);
+        }
 
         return expr;
     }
