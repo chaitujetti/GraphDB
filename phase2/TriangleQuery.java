@@ -10,7 +10,7 @@ import java.io.IOException;
  * Created by vamsikrishnag on 4/25/17.
  */
 public class TriangleQuery implements GlobalConst{
-    FileScan iter1,iter2, iter3;
+    FileScan iter1,iter2, iter3, iter4;
     CondExpr[] expr1,expr2, exprf1, exprf2, exprf3;
     AttrType[] attr1,attr2,otype;
     FldSpec[] projection1,projection2;
@@ -56,14 +56,19 @@ public class TriangleQuery implements GlobalConst{
         attr2[1] = new AttrType(AttrType.attrString);//d1 or s2
         attr2[2] = new AttrType(AttrType.attrString);//d2
         
-        short[] size2 = new short[6];
+        short[] size2 = new short[3];
         size2[0] = Tuple.LABEL_MAX_LENGTH;
         size2[1] = Tuple.LABEL_MAX_LENGTH;
         size2[2] = Tuple.LABEL_MAX_LENGTH;
-        
-        iter1 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,exprf1);
-        iter2 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,exprf2);
-        iter3 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,exprf3);
+
+        otype = new AttrType[3];
+        otype[0] = new AttrType(AttrType.attrString);
+        otype[1] = new AttrType(AttrType.attrString);
+        otype[2] = new AttrType(AttrType.attrString);
+
+        iter1 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,null);
+        iter2 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,null);
+        iter3 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,null);
 
         TupleOrder asc = new TupleOrder(TupleOrder.Ascending);
         
@@ -79,21 +84,22 @@ public class TriangleQuery implements GlobalConst{
         
         s1 = new SortMerge(attr1,8,size1,attr1,8,size1,2,10,1,10,512,iter1,iter2,false,false,asc,expr1,projection1,3);
 
-        s2 = new SortMerge(attr2,8,size2,attr1,8,size1,6,10,1,10,512,s1,iter3,true,false,asc,expr2,projection2,3);
-
-        if( s1 == null){
-            System.out.println("s1 is null");
+        Heapfile hf=new Heapfile("HeapFile_"+systemdef.JavabaseDB.DBname);
+        Tuple tem = new Tuple();
+        tem.setHdr((short)3, attr2, size2);
+        tem = s1.get_next();
+        while(tem != null){
+            hf.insertRecord(tem.getTupleByteArray());
+            tem = s1.get_next();
         }
+        iter1.close();
+        iter2.close();
+        s1.close();
 
-        if( s2 == null){
-            System.out.println("s2 is null");
-        }
+        iter4 = new FileScan(hf._fileName,attr2,size2,(short)3,(short)3,projection2,null);
 
-        otype = new AttrType[12];
-        otype[0] = new AttrType(AttrType.attrString);
-        otype[1] = new AttrType(AttrType.attrString);
-        otype[2] = new AttrType(AttrType.attrString);
-        
+        s2 = new SortMerge(attr2,3,size2,attr1,8,size1,3,10,1,10,1024,iter4,iter3,false,false,asc,expr2,projection2,3);
+
         Tuple temp= s2.get_next();
         if (temp == null){
             System.out.println("temp is null");
@@ -102,6 +108,10 @@ public class TriangleQuery implements GlobalConst{
             temp.print(otype);
             temp = s2.get_next();
         }
+
+        iter4.close();
+        iter3.close();
+        s2.close();
     }
 
     private static CondExpr[] condExpr1(String label1,String label2) {

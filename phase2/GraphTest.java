@@ -316,7 +316,6 @@ class GraphDriver {
                         systemdef.JavabaseDB.createIndexFiles(varargs[0]);
                     }
                     String input10 = varargs[1];
-                    input10 = "L:1;L:2;L:3";
                     TriangleQuery tq = new TriangleQuery(systemdef,input10);
 
                     break;
