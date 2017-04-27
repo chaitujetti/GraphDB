@@ -14,7 +14,7 @@ import java.lang.*;
 import java.io.*;
 import java.util.*;
 
-public class IndexNestedLoopsJoins extends Iterator
+public class IndexNestedLoopsJoins extends Iterator implements GlobalConst
 {
 
     private CondExpr outerCondn[];
@@ -47,7 +47,7 @@ public class IndexNestedLoopsJoins extends Iterator
 
     public IndexNestedLoopsJoins(int joinType, Heapfile outerRelHeapFile, Heapfile innerRelHeapFile, BTreeFile innerRelIndexFile, CondExpr outerCondn[], CondExpr innerCondn[], RID outerRID) throws Exception, IOException, HFException, HFBufMgrException, HFDiskMgrException, ConstructPageException, GetFileEntryException, PinPageException, InvalidTupleSizeException {
 
-        stringSize = 10;
+        stringSize = MAX_STR_SIZE;
 
         this.joinType= joinType;
         this.outerCondn=outerCondn;
@@ -170,10 +170,11 @@ public class IndexNestedLoopsJoins extends Iterator
             try
             {
                 //outerRelScan.closescan();
+                innerRelScan.DestroyBTreeFileScan();
             }
             catch (Exception e)
             {
-                throw new JoinsException(e, "IndexNestedLoopsJoins.java: error in closing Outer Relation scan.");
+                throw new JoinsException(e, "IndexNestedLoopsJoins.java: error in closing Inner Relation scan.");
             }
         }
     }

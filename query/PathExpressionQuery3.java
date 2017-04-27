@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * Created by ankur on 4/22/17.
  */
-public class PathExpressionQuery3 {
+public class PathExpressionQuery3 implements GlobalConst{
 
     private int condition;
     private int value;
@@ -34,7 +34,7 @@ public class PathExpressionQuery3 {
         ehf = graphDB.getEhf();
         nodeIndexFile = graphDB.nodeLabels_BFile;
         edgeSourceLabelsIndexFile = graphDB.edgeSourceLabels_BFile;
-        stringSize = 10;
+        stringSize = MAX_STR_SIZE;
     }
 
     public void parseInput(String[] input)
@@ -130,14 +130,16 @@ public class PathExpressionQuery3 {
                 sort_nodes.close();
             }
             catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                System.out.println("Sort done successfully: Close failed");
             }
         }
         try {
             tempFileScan.close();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.out.println("Filescan close failed");
         }
 
     }

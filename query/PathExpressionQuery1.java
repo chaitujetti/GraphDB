@@ -3,6 +3,7 @@ import btree.BTreeFile;
 import bufmgr.PageNotReadException;
 import diskmgr.GraphDB;
 import global.*;
+
 import heap.*;
 import iterator.*;
 import operator.*;
@@ -13,7 +14,7 @@ import java.util.Arrays;
 /**
  * Created by bharath on 4/17/17.
  */
-public class PathExpressionQuery1 {
+public class PathExpressionQuery1 implements GlobalConst{
     private NodeRegEx[] nodePathExp;
     Heapfile output;
     private GraphDB graphDB;
@@ -32,7 +33,7 @@ public class PathExpressionQuery1 {
         nodeIndexFile = graphDB.nodeLabels_BFile;
         edgeSourceLabelsIndexFile = graphDB.edgeSourceLabels_BFile;
 
-        stringSize = 10;
+        stringSize = MAX_STR_SIZE;
     }
 
     public void parseInput(String[] input)
@@ -124,14 +125,16 @@ public class PathExpressionQuery1 {
                 sort_nodes.close();
             }
             catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                System.out.println("Sort done successfully: Close failed");
             }
         }
         try {
             tempFileScan.close();
         }
         catch (Exception e){
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.out.println("Filescan close failed");
         }
 
     }

@@ -12,7 +12,7 @@ import java.time.Clock;
 /**
  * Created by ankur on 4/22/17.
  */
-public class PathExpressionOperator3
+public class PathExpressionOperator3 implements GlobalConst
 {
     private RID root;
     private String rootLabel="";
@@ -48,7 +48,7 @@ public class PathExpressionOperator3
         this.condition=condition;
         outputFile = new Heapfile(outputHeapFileName);
 
-        stringSize = 10;
+        stringSize = MAX_STR_SIZE;
     }
 
     public FileScan getOutputFileScanObject()
@@ -144,6 +144,7 @@ public class PathExpressionOperator3
                     break;
                 }
             }
+            inlj.close();
         }
         else    //Edge Node Join
         {
@@ -171,6 +172,7 @@ public class PathExpressionOperator3
                     break;
                 }
             }
+            inlj.close();
         }
     }
 

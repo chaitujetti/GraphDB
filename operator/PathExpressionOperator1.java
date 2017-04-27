@@ -8,7 +8,7 @@ import global.*;
 import java.io.IOException;
 
 
-public class PathExpressionOperator1
+public class PathExpressionOperator1 implements GlobalConst
 {
     private NodeRegEx[] nodeRegEx;
     private RID root;
@@ -42,7 +42,7 @@ public class PathExpressionOperator1
         outputFile = new Heapfile(outputHeapFileName);
         outputFilescan = null;
 
-        stringSize = 10;
+        stringSize = MAX_STR_SIZE;
     }
 
     public CondExpr[] setNodeExpressions(String label)
@@ -134,6 +134,7 @@ public class PathExpressionOperator1
                     break;
                 }
             }
+            inlj.close();
         }
         else    //Edge Node Join
         {
@@ -191,6 +192,7 @@ public class PathExpressionOperator1
                     break;
                 }
             }
+            inlj.close();
         }
 
     }
