@@ -42,7 +42,7 @@ public class PathExpressionOperator1 implements GlobalConst
         outputFile = new Heapfile(outputHeapFileName);
         outputFilescan = null;
 
-        stringSize = MAX_STR_SIZE;
+        stringSize = 2 * MAX_STR_SIZE + 1;
     }
 
     public CondExpr[] setNodeExpressions(String label)

@@ -1,0 +1,1081 @@
+Script started on Wed Apr 26 22:50:36 2017
+[?1034hbash-3.2$ make db
+make -C global
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/lib/classes.zip:.:..:.:.. *.java
+make -C chainexception
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/lib/classes.zip:.:..:.:.. *.java
+make -C btree
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/lib/classes.zip:.:..:.:.. *.java
+make -C bufmgr
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/lib/classes.zip:.:..:.:.. *.java
+make -C diskmgr
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/lib/classes.zip:.:..:.:.. *.java
+make -C heap
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/lib/classes.zip:.:..:.:.. *.java
+make -C index
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/lib/classes.zip:.:..:.:.. *.java
+make -C iterator
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/lib/classes.zip:.:..:.:.. *.java
+Sort.java:10: warning: Des is internal proprietary API and may be removed in a future release
+import sun.security.krb5.internal.crypto.Des;
+                                        ^
+1 warning
+make -C query
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/lib/classes.zip:.:..:.:.. *.java
+make -C operator
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath /Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/lib/classes.zip:.:..:.:.. *.java
+make -C phase2
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath .:.. GraphTest.java
+bash-3.2$ make test
+#cd tests; make bmtest dbtest; whoami; make hftest bttest indextest jointest sorttest sortmerge;
+cd phase2; make graphtest
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath .:.. GraphTest.java
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/java  -classpath .:.. phase2.GraphTest
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :1
+ Enter NODEFILENAME GRAPHDBNAME :-NodeInsertData.txt test
+Replacer: Clock
+
+Node count = 1056
+Edge count = 0
+Disk pages read =8
+Disk pages written =4
+Batch Node Insert successful
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :2
+ Enter EDGEFILENAME GRAPHDBNAME :-EdgeInsertData.txt test
+Node count = 1056
+Edge count = 3172
+Disk pages read =0
+Disk pages written =0
+Batch Edge Insert successful
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :9
+bash-3.2$ make test
+#cd tests; make bmtest dbtest; whoami; make hftest bttest indextest jointest sorttest sortmerge;
+cd phase2; make graphtest
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath .:.. GraphTest.java
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/java  -classpath .:.. phase2.GraphTest
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :5
+Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/,L-labels,D-Descriptor):ts est a L:0/L:1000
+Replacer: Clock
+
+QP: Select Node where Label=0
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Label = 1000; Project Node;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Label = 1000; Project Node;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Label = 1000; Project Node;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Label = 1000; Project Node;
+No. of Disk pages read:110; No. of Disk Pages written:0
+QP: Project Head and Tail Nodes
+0_1000
+No. of Disk pages read:0; No. of Disk Pages written:0
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :5
+Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/,L-labels,D-Descriptor):test b D:  L:0/D:49,38,28,9,5
+QP: Select Node where Label=0
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [49,38,28,9,5]; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [49,38,28,9,5]; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [49,38,28,9,5]; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [49,38,28,9,5]; Project Node
+No. of Disk pages read:0; No. of Disk Pages written:0
+QP: Sort Head and Tail Nodes in Ascending order
+QP: Project Head and Tail Nodes
+0_1000
+No. of Disk pages read:0; No. of Disk Pages written:0
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :5
+Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/,L-labels,D-Descriptor):test c L:0/D:49,38,28,9,5
+QP: Select Node where Label=0
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [49,38,28,9,5]; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [49,38,28,9,5]; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [49,38,28,9,5]; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [49,38,28,9,5]; Project Node
+No. of Disk pages read:0; No. of Disk Pages written:0
+QP: Sort Head and Tail Nodes in Ascending order
+QP: Project Distict pairs of Head and Tail Nodes
+0_1000
+No. of Disk pages read:0; No. of Disk Pages written:0
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :5
+Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/,L-labels,D-Descriptor):test b L:851/D:42,21,24,22,19
+QP: Select Node where Label=851
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [42,21,24,22,19]; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [42,21,24,22,19]; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [42,21,24,22,19]; Project Node
+No. of Disk pages read:524; No. of Disk Pages written:0
+QP: Sort Head and Tail Nodes in Ascending order
+QP: Project Head and Tail Nodes
+851_1003
+No. of Disk pages read:0; No. of Disk Pages written:0
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :5
+Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/,L-labels,D-Descriptor):test c D:1,27,5,47,44/D:1,1,1,1,1
+QP: Select Node where Descriptor=[1,27,5,47,44]
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [1,1,1,1,1]; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [1,1,1,1,1]; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [1,1,1,1,1]; Project Node
+No. of Disk pages read:12; No. of Disk Pages written:0
+QP: Sort Head and Tail Nodes in Ascending order
+QP: Project Distict pairs of Head and Tail Nodes
+No. of Disk pages read:0; No. of Disk Pages written:0
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :5
+Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/,L-labels,D-Descriptor):test c D:1,27,5,47,44/D:46,48,2,30,36
+QP: Select Node where Descriptor=[1,27,5,47,44]
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [46,48,2,30,36]; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [46,48,2,30,36]; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Select Node where Descriptor = [46,48,2,30,36]; Project Node
+No. of Disk pages read:0; No. of Disk Pages written:0
+QP: Sort Head and Tail Nodes in Ascending order
+QP: Project Distict pairs of Head and Tail Nodes
+300_750
+No. of Disk pages read:0; No. of Disk Pages written:0
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :6
+Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/, L-node/edge labels,D-Descriptor,W-max_edge_weight):test a D:1=  46,48,2,30,36/W:100
+QP: Select Node where Descriptor=[46,48,2,30,36]
+QP: IndexNestedLoopJoin Node|X|Edge , Join Condition is Node.Label=Edge.Source; Select Edge where Edge.weight<=100; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+No. of Disk pages read:4; No. of Disk Pages written:0
+QP: Project Head and Tail Nodes
+750_993
+750_901
+750_848
+No. of Disk pages read:0; No. of Disk Pages written:0
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :6
+Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/, L-node/edge labels,D-Descriptor,W-max_edge_weight):test a D:46,48,2,30,36/                  b D:46,48,2,30,36/W:100
+QP: Select Node where Descriptor=[46,48,2,30,36]
+QP: IndexNestedLoopJoin Node|X|Edge , Join Condition is Node.Label=Edge.Source; Select Edge where Edge.weight<=100; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+No. of Disk pages read:0; No. of Disk Pages written:0
+QP: Sort Head and Tail Nodes in Ascending order
+QP: Project Head and Tail Nodes
+750_848
+750_901
+750_993
+No. of Disk pages read:0; No. of Disk Pages written:0
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :6
+Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/, L-node/edge labels,D-Descriptor,W-max_edge_weight):test c L:771/W W:100/W:   /W:10  30
+QP: Select Node where Label=771
+QP: IndexNestedLoopJoin Node|X|Edge , Join Condition is Node.Label=Edge.Source; Select Edge where Edge.weight<=100; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge , Join Condition is Node.Label=Edge.Source; Select Edge where Edge.weight<=30; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge , Join Condition is Node.Label=Edge.Source; Select Edge where Edge.weight<=30; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge , Join Condition is Node.Label=Edge.Source; Select Edge where Edge.weight<=30; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge , Join Condition is Node.Label=Edge.Source; Select Edge where Edge.weight<=30; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge , Join Condition is Node.Label=Edge.Source; Select Edge where Edge.weight<=30; Project Edge;
+No. of Disk pages read:26; No. of Disk Pages written:0
+QP: Sort Head and Tail Nodes in Ascending order
+QP: Project Distict pairs of Head and Tail Nodes
+771_837
+771_927
+No. of Disk pages read:0; No. of Disk Pages written:0
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :7
+Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/, L-node label,D-Descriptor,W-max_edge_weight, D-Max_num_edges):test a L:415/D:4
+QP: Select Node where Label=415
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+No. of Disk pages read:32; No. of Disk Pages written:0
+QP: Project Head and Tail Nodes
+415_987
+415_931
+415_981
+415_771
+415_1024
+415_924
+415_982
+415_933
+415_981
+415_1035
+415_1054
+415_1032
+415_1009
+415_987
+415_989
+415_1019
+415_1019
+415_1025
+415_1024
+415_881
+No. of Disk pages read:0; No. of Disk Pages written:0
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :7
+Enter GRAPHDBNAME Querytype(a|b|c) PathExpression(Delim-/, L-node label,D-Descriptor,W-max_edge_weight, D-Max_num_edges):test b L:44 15/W:1000
+QP: Select Node where Label=415
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+QP: IndexNestedLoopJoin Edge|X|Node , Join Condition is Edge.Destination=Node.Label; Project Node
+QP: IndexNestedLoopJoin Node|X|Edge Join Condition is Node.Label=Edge.Source; Project Edge;
+No. of Disk pages read:2; No. of Disk Pages written:0
+QP: Sort Head and Tail Nodes in Ascending order
+QP: Project Head and Tail Nodes
+415_1008
+415_1009
+415_1019
+415_1019
+415_1021
+415_1024
+415_1024
+415_1025
+415_1032
+415_1035
+415_1051
+415_1051
+415_1054
+415_881
+415_924
+415_931
+415_941
+415_981
+415_981
+415_982
+415_987
+415_987
+415_989
+415_996
+415_996
+415_996
+415_997
+415_997
+No. of Disk pages read:0; No. of Disk Pages written:0
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :9
+bash-3.2$ make test
+#cd tests; make bmtest dbtest; whoami; make hftest bttest indextest jointest sorttest sortmerge;
+cd phase2; make graphtest
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath .:.. GraphTest.java
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/java  -classpath .:.. phase2.GraphTest
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :1
+ Enter NODEFILENAME GRAPHDBNAME :-NodeInsertData.txt test
+Replacer: Clock
+
+Node count = 1056
+Edge count = 0
+Disk pages read =8
+Disk pages written =4
+Batch Node Insert successful
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :2
+ Enter EDGEFILENAME GRAPHDBNAME :-EdgeInsertData.txt test
+Node count = 1056
+Edge count = 3172
+Disk pages read =0
+Disk pages written =0
+Batch Edge Insert successful
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :9
+bash-3.2$ make test
+#cd tests; make bmtest dbtest; whoami; make hftest bttest indextest jointest sorttest sortmerge;
+cd phase2; make graphtest
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath .:.. GraphTest.java
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/java  -classpath .:.. phase2.GraphTest
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :8
+Enter GRAPHDBNAME OPTION EN;EN;EN test a W:25;W:25: ;W:25
+Replacer: Clock
+
+Sort Done, Closing Failed
+[3_1_2]
+[3_1_2]
+[1_2_3]
+[1_2_3]
+[2_3_1]
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :9
+bash-3.2$ make test
+#cd tests; make bmtest dbtest; whoami; make hftest bttest indextest jointest sorttest sortmerge;
+cd phase2; make graphtest
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath .:.. GraphTest.java
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/java  -classpath .:.. phase2.GraphTest
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :1
+ Enter NODEFILENAME GRAPHDBNAME :-NodeInsertData.txt test
+Replacer: Clock
+
+Node count = 1056
+Edge count = 0
+Disk pages read =8
+Disk pages written =4
+Batch Node Insert successful
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :2
+ Enter EDGEFILENAME GRAPHDBNAME :-EdgeInsertData.txt test
+Node count = 1056
+Edge count = 3172
+Disk pages read =0
+Disk pages written =0
+Batch Edge Insert successful
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :9
+bash-3.2$ make test
+#cd tests; make bmtest dbtest; whoami; make hftest bttest indextest jointest sorttest sortmerge;
+cd phase2; make graphtest
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath .:.. GraphTest.java
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/java  -classpath .:.. phase2.GraphTest
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :8
+Enter GRAPHDBNAME OPTION EN;EN;EN test b W:25;W:25;W:25
+Replacer: Clock
+
+Sort Done, Closing Failed
+[1_2_3]
+[1_2_3]
+[2_3_1]
+[3_1_2]
+[3_1_2]
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :9
+bash-3.2$ make test
+#cd tests; make bmtest dbtest; whoami; make hftest bttest indextest jointest sorttest sortmerge;
+cd phase2; make graphtest
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath .:.. GraphTest.java
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/java  -classpath .:.. phase2.GraphTest
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :1
+ Enter NODEFILENAME GRAPHDBNAME :-NodeInsertData.txt test
+Replacer: Clock
+
+Node count = 1056
+Edge count = 0
+Disk pages read =8
+Disk pages written =4
+Batch Node Insert successful
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :2
+ Enter EDGEFILENAME GRAPHDBNAME :-EdgeInsertData.txt test
+Node count = 1056
+Edge count = 3172
+Disk pages read =0
+Disk pages written =0
+Batch Edge Insert successful
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :9
+bash-3.2$ make test
+#cd tests; make bmtest dbtest; whoami; make hftest bttest indextest jointest sorttest sortmerge;
+cd phase2; make graphtest
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/javac -classpath .:.. GraphTest.java
+/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/bin/java  -classpath .:.. phase2.GraphTest
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :8
+Enter GRAPHDBNAME OPTION EN;EN;EN test c W:25;W:25;W:25
+Replacer: Clock
+
+Sort Done, Closing Failed
+[1_2_3]
+[2_3_1]
+[3_1_2]
+-------------------------- MENU ------------------
+
+
+[1] Task 10 - Batch Node Insert
+[2] Task 11 - Batch Edge Insert
+[3] Task 12 - Batch Node Delete
+[4] Task 13 - Batch Edge Delete
+[5] Path Expression Query 1
+[6] Path Expression Query 2
+[7] Path Expression Query 3
+[8] Triangle Query
+
+
+[9]  Quit!
+Hi, make your choice :9
+bash-3.2$ exit
+exit
+
+Script done on Wed Apr 26 23:09:47 2017

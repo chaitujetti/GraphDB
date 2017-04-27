@@ -321,8 +321,10 @@ class GraphDriver {
                     // catch(PagePinnedException e){
                     //     System.out.println(e);
                     // }
-                    String input10 = varargs[1];
+                    String input10 = varargs[2];
                     TriangleQuery tq = new TriangleQuery(systemdef,input10);
+                    tq.print(varargs[1]);
+                    tq.close();
                     
                     break;
 

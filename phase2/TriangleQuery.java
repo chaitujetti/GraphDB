@@ -3,6 +3,9 @@ package phase2;
 import global.*;
 import iterator.*;
 import heap.*;
+import diskmgr.*;
+import bufmgr.*;
+import btree.*;
 
 import java.io.IOException;
 
@@ -10,13 +13,17 @@ import java.io.IOException;
  * Created by vamsikrishnag on 4/25/17.
  */
 public class TriangleQuery implements GlobalConst{
-    FileScan iter1,iter2, iter3, iter4;
-    CondExpr[] expr1,expr2, exprf1, exprf2, exprf3;
-    AttrType[] attr1,attr2,otype;
-    FldSpec[] projection1,projection2;
-    SortMerge s1,s2;
+    
+    Heapfile results;
 
     public TriangleQuery(SystemDefs systemdef,String query) throws Exception {
+        this.results = new Heapfile("ResultHeapFile_"+systemdef.JavabaseDB.DBname);
+
+        FileScan iter1,iter2, iter3;
+        CondExpr[] expr1,expr2, exprf1, exprf2, exprf3;
+        AttrType[] attr1,attr2, attr3, otype;
+        FldSpec[] projection1,projection2;
+        SortMerge s1,s2;
 
         String[] queries = query.split(";");
         expr1 = condExpr1(queries[0], queries[1]);
@@ -126,7 +133,7 @@ public class TriangleQuery implements GlobalConst{
             System.out.println("tem is null");
         }
         while(tem != null){
-            tem.print(otype);
+            // tem.print(otype);
             hf.insertRecord(tem.getTupleByteArray());
             tem.setHdr((short)3, attr2, size2);
             tem = s1.get_next();
@@ -141,26 +148,81 @@ public class TriangleQuery implements GlobalConst{
         }
         
         // iter3 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,exprf3);
-        iter4 = new FileScan(hf._fileName,attr2,size2,(short)3,(short)3,projection2,null);
+        iter3 = new FileScan(hf._fileName,attr2,size2,(short)3,(short)3,projection2,null);
 
-        s2 = new SortMerge(attr2,3,size2,attr1,8,size1,3,10,1,10,512,iter4,iter3,false,false,asc,expr2,projection2,3);
+        // s2 = new SortMerge(attr2,3,size2,attr1,8,size1,3,10,1,10,512,iter3,iter3,false,false,asc,expr2,projection2,3);
 
-        Tuple temp = s2.get_next();
+        // Tuple temp = s2.get_next();
+        // if (temp == null){
+        //     System.out.println("temp is null");
+        // }
+        // while(temp != null){
+        //     temp.print(otype);
+        //     temp = s2.get_next();
+        // }
+
+        // 
+        // // iter3.close();
+        // try{
+        //     s2.close();
+        // } catch(Exception e){
+        //     System.out.println("Sort Done, Closing Failed");
+        // }
+
+        Tuple tuple = new Tuple();
+
+        attr3 = new AttrType[1];
+        attr3[0] = new AttrType(AttrType.attrString);
+
+        short[] size3 = new short[3];
+        size3[0] = 3 * Tuple.LABEL_MAX_LENGTH + 2;
+
+
+        String des, merged;
+        BTFileScan scan = null;
+        KeyDataEntry entry;
+        Tuple temp = iter3.get_next();
+        EID edgeId = new EID();
         if (temp == null){
             System.out.println("temp is null");
         }
         while(temp != null){
-            temp.print(otype);
-            temp = s2.get_next();
+            des = temp.getStrFld(3);
+            scan = systemdef.JavabaseDB.getEdgeSourceIndex().new_scan(new StringKey(des), new StringKey(des));
+            entry = scan.get_next();
+            while(entry != null) {
+                LeafData leafNode=(LeafData)entry.data;
+                RID record = leafNode.getData();
+                edgeId.pageNo.pid = record.pageNo.pid;
+                edgeId.slotNo = record.slotNo;
+                Edge edge=systemdef.JavabaseDB.getEhf().getEdge(edgeId);
+                if(edge.getDestinationLabel().equals(temp.getStrFld(1))){
+                    if(values[0].equals("L")){
+                        if(edge.getLabel().equals(values[1])){
+                            // temp.print(otype);
+                            merged = temp.getStrFld(1) + "_" + temp.getStrFld(2) + "_" + temp.getStrFld(3);
+                            tuple.setHdr((short)1, attr3, size3);
+                            tuple.setStrFld(1, merged);
+                            this.results.insertRecord(tuple.getTupleByteArray());
+                        }
+                    }
+                    if(values[0].equals("W")){
+                        if(edge.getWeight() <= Integer.parseInt(values[1])){
+                            // temp.print(otype);
+                            merged = temp.getStrFld(1) + "_" + temp.getStrFld(2) + "_" + temp.getStrFld(3);
+                            tuple.setHdr((short)1, attr3, size3);
+                            tuple.setStrFld(1, merged);
+                            this.results.insertRecord(tuple.getTupleByteArray());
+                        }
+                    }
+                }
+                entry = scan.get_next();
+            }
+            temp = iter3.get_next();
         }
 
-        iter4.close();
-        // iter3.close();
-        try{
-            s2.close();
-        } catch(Exception e){
-            System.out.println("Sort Done, Closing Failed");
-        }
+        iter3.close();
+        scan.DestroyBTreeFileScan();
         hf.deleteFile();
     }
 
@@ -202,4 +264,74 @@ public class TriangleQuery implements GlobalConst{
         return expr;
     }
 
+    public void print(String type) throws Exception {
+        AttrType[] attr = new AttrType[1];
+        attr[0] = new AttrType(AttrType.attrString);
+
+        short[] size = new short[3];
+        size[0] = 3 * Tuple.LABEL_MAX_LENGTH + 2;
+
+        FldSpec[] projection = new FldSpec[1];
+        projection[0] = new FldSpec(new RelSpec(RelSpec.outer), 1);
+
+        TupleOrder asc = new TupleOrder(TupleOrder.Ascending);
+
+        FileScan iter = new FileScan(this.results._fileName,attr,size,(short)1,(short)1,projection,null);
+        if(type.equals("a")){
+            Tuple t = new Tuple();
+            t = iter.get_next();
+            while(t!=null){
+                t.print(attr);
+                t = iter.get_next();
+            }
+            iter.close();
+            return;
+        } else {
+            Sort newSort = new Sort(attr, (short)1, size, iter, 1, asc, size[0], 10);
+            if(type.equals("b")){
+                Tuple t = new Tuple();
+                t = newSort.get_next();
+                while(t!=null){
+                    t.print(attr);
+                    t = newSort.get_next();
+                }
+                
+                try{
+                    iter.close();
+                    newSort.close();
+                }catch(Exception e){
+                    System.out.println("Sorting Done, Close Failed");
+                }
+                return;
+            } else {
+                Tuple t = new Tuple();
+                String tstr = null;
+                String lstr = null;
+                t = newSort.get_next();
+                tstr = t.getStrFld(1);
+                while(t!=null){
+                    if(!tstr.equals(lstr)){
+                        t.print(attr);
+                        lstr = tstr;
+                    }
+                    t = newSort.get_next();
+                    if(t!=null){
+                        tstr = t.getStrFld(1);
+                    }
+                }
+                
+                try{
+                    iter.close();
+                    newSort.close();
+                }catch(Exception e){
+                    System.out.println("Sorting Done, Close Failed");
+                }
+                return;
+            }
+        }
+    }
+
+    public void close() throws Exception {
+        this.results.deleteFile();
+    }
 }

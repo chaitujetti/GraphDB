@@ -34,7 +34,7 @@ public class PathExpressionQuery3 implements GlobalConst{
         ehf = graphDB.getEhf();
         nodeIndexFile = graphDB.nodeLabels_BFile;
         edgeSourceLabelsIndexFile = graphDB.edgeSourceLabels_BFile;
-        stringSize = MAX_STR_SIZE;
+        stringSize = 2 * MAX_STR_SIZE + 1;
     }
 
     public void parseInput(String[] input)

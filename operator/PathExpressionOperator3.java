@@ -48,7 +48,7 @@ public class PathExpressionOperator3 implements GlobalConst
         this.condition=condition;
         outputFile = new Heapfile(outputHeapFileName);
 
-        stringSize = MAX_STR_SIZE;
+        stringSize = 2 *MAX_STR_SIZE+1;
     }
 
     public FileScan getOutputFileScanObject()
