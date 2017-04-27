@@ -15,7 +15,7 @@ import java.io.IOException;
 /**
  * Created by ankur on 4/20/17.
  */
-public class PathExpressionQuery2 {
+public class PathExpressionQuery2 implements GlobalConst{
 
     private EdgeRegEx[] nodePathExp;
     Heapfile output;
@@ -35,7 +35,7 @@ public class PathExpressionQuery2 {
         ehf = graphDB.getEhf();
         nodeIndexFile = graphDB.nodeLabels_BFile;
         edgeSourceLabelsIndexFile = graphDB.edgeSourceLabels_BFile;
-        stringSize = 10;
+        stringSize = MAX_STR_SIZE;
     }
 
     public void parseInput(String[] input)
@@ -142,14 +142,16 @@ public class PathExpressionQuery2 {
                 sort_nodes.close();
             }
             catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                System.out.println("Sort done successfully: Close failed");
             }
         }
         try {
             tempFileScan.close();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.out.println("Filescan close failed");
         }
 
     }
