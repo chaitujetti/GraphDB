@@ -11,7 +11,7 @@ import java.time.Clock;
 /**
  * Created by ankur on 4/20/17.
  */
-public class PathExpressionOperator2
+public class PathExpressionOperator2 implements GlobalConst
 {
     private EdgeRegEx[] edgeRegEx;
     private RID root;
@@ -44,7 +44,7 @@ public class PathExpressionOperator2
         position =0;
         outputFile = new Heapfile(outputHeapFileName);
         outputFilescan = null;
-        stringSize = 10;
+        stringSize = MAX_STR_SIZE;
     }
 
     public CondExpr[] setEdgeExpressions(String label)
@@ -151,6 +151,7 @@ public class PathExpressionOperator2
                     break;
                 }
             }
+            inlj.close();
         }
         else    //Edge Node Join
         {
@@ -196,6 +197,7 @@ public class PathExpressionOperator2
                     break;
                 }
             }
+            inlj.close();
         }
     }
 

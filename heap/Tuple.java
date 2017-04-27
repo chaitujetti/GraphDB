@@ -10,7 +10,7 @@ import global.*;
 public class Tuple implements GlobalConst{
 
     public static final String LABEL_CONSTANT = "0";
-    public static final int LABEL_MAX_LENGTH = 10;
+    public static final int LABEL_MAX_LENGTH = MAX_STR_SIZE;
     /**
      * Maximum size of any tuple
      */
