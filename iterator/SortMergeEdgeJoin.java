@@ -1,10 +1,7 @@
 package iterator;
 
-import com.sun.org.apache.xpath.internal.operations.String;
-import global.AttrOperator;
-import global.AttrType;
-import global.Descriptor;
-import global.TupleOrder;
+import global.*;
+import heap.EScan;
 import heap.Tuple;
 
 /**
@@ -14,22 +11,22 @@ public class SortMergeEdgeJoin {
     private CondExpr OutFilter[];
     private SortMerge s;
 
-    public SortMergeEdgeJoin(String filename) {
+    public SortMergeEdgeJoin(SystemDefs systemdef) {
         OutFilter = new CondExpr[3];
         for (int i=0;i<3;i++) {
             OutFilter[i] = new CondExpr();
         }
         setCondExpr(OutFilter);
-        SortMergeJoin(filename);
+        SortMergeJoin(systemdef);
     }
 
-    public SortMergeEdgeJoin(String label, String filename) {
+    public SortMergeEdgeJoin(String label, SystemDefs systemdef) {
         OutFilter = new CondExpr[3];
         for (int i=0;i<3;i++) {
             OutFilter[i] = new CondExpr();
         }
         setCondExpr(OutFilter,label);
-        SortMergeJoin(filename);
+        SortMergeJoin(systemdef);
     }
 
     private static void setCondExpr(CondExpr[] expr) {
@@ -37,8 +34,8 @@ public class SortMergeEdgeJoin {
         expr[0].op = new AttrOperator(AttrOperator.aopEQ);
         expr[0].type1 = new AttrType(AttrType.attrSymbol);
         expr[0].type2 = new AttrType(AttrType.attrSymbol);
-        expr[0].operand1.symbol = new FldSpec(new RelSpec(RelSpec.outer),7);
-        expr[0].operand2.symbol = new FldSpec(new RelSpec(RelSpec.innerRel),8);
+        expr[0].operand1.symbol = new FldSpec(new RelSpec(RelSpec.outer),1);
+        expr[0].operand2.symbol = new FldSpec(new RelSpec(RelSpec.innerRel),2);
         expr[1] = null;
         expr[2] = null;
     }
@@ -48,34 +45,34 @@ public class SortMergeEdgeJoin {
         expr[0].op = new AttrOperator(AttrOperator.aopEQ);
         expr[0].type1 = new AttrType(AttrType.attrSymbol);
         expr[0].type2 = new AttrType(AttrType.attrSymbol);
-        expr[0].operand1.symbol = new FldSpec(new RelSpec(RelSpec.outer),7);
-        expr[0].operand2.string = ""+label;
+        expr[0].operand1.symbol = new FldSpec(new RelSpec(RelSpec.outer),1);
+        expr[0].operand2.string = label;
 
         expr[1].next = null;
         expr[1].op = new AttrOperator(AttrOperator.aopEQ);
         expr[1].type1 = new AttrType(AttrType.attrSymbol);
         expr[1].type2 = new AttrType(AttrType.attrSymbol);
-        expr[1].operand1.symbol = new FldSpec(new RelSpec(RelSpec.innerRel),8);
-        expr[1].operand2.string = ""+label;
+        expr[1].operand1.symbol = new FldSpec(new RelSpec(RelSpec.innerRel),2);
+        expr[1].operand2.string = label;
 
         expr[2] = null;
     }
 
-    public void SortMergeJoin(String filename) {
+    public void SortMergeJoin(SystemDefs systemdef) {
         AttrType []E1Type = new AttrType[8];
         E1Type[0] = new AttrType(AttrType.attrString);
-        E1Type[1] = new AttrType(AttrType.attrInteger);
-        E1Type[2] = new AttrType(AttrType.attrInteger);
+        E1Type[1] = new AttrType(AttrType.attrString);
+        E1Type[2] = new AttrType(AttrType.attrString);
         E1Type[3] = new AttrType(AttrType.attrInteger);
         E1Type[4] = new AttrType(AttrType.attrInteger);
         E1Type[5] = new AttrType(AttrType.attrInteger);
-        E1Type[6] = new AttrType(AttrType.attrString);
-        E1Type[7] = new AttrType(AttrType.attrString);
+        E1Type[6] = new AttrType(AttrType.attrInteger);
+        E1Type[7] = new AttrType(AttrType.attrInteger);
 
         short []E1size = new short[3];
         E1size[0] = Tuple.LABEL_MAX_LENGTH;
-        E1size[1] = 4;
-        E1size[2] = 4;
+        E1size[1] = Tuple.LABEL_MAX_LENGTH;
+        E1size[2] = Tuple.LABEL_MAX_LENGTH;
 
         FldSpec []E1Proj = new FldSpec[8];
         for (int i=0;i<8;i++) {
@@ -84,13 +81,13 @@ public class SortMergeEdgeJoin {
 
         AttrType []E2Type = new AttrType[8];
         E2Type[0] = new AttrType(AttrType.attrString);
-        E2Type[1] = new AttrType(AttrType.attrInteger);
-        E2Type[2] = new AttrType(AttrType.attrInteger);
+        E2Type[1] = new AttrType(AttrType.attrString);
+        E2Type[2] = new AttrType(AttrType.attrString);
         E2Type[3] = new AttrType(AttrType.attrInteger);
         E2Type[4] = new AttrType(AttrType.attrInteger);
         E2Type[5] = new AttrType(AttrType.attrInteger);
-        E2Type[6] = new AttrType(AttrType.attrString);
-        E2Type[7] = new AttrType(AttrType.attrString);
+        E2Type[6] = new AttrType(AttrType.attrInteger);
+        E2Type[7] = new AttrType(AttrType.attrInteger);
 
         short []E2size = new short[3];
         E2size[0] = Tuple.LABEL_MAX_LENGTH;
@@ -106,29 +103,29 @@ public class SortMergeEdgeJoin {
         FileScan am2 = null;
 
         try {
-            am = new FileScan(""+filename,E1Type,E1size,(short)8,(short)8,E1Proj,null);
+            am = new FileScan(systemdef.JavabaseDB.getEhf().getFileName(),E1Type,E1size,(short)8,(short)8,E1Proj,null);
         }
         catch (Exception e) {
-            System.err.println(""+e);
+            System.err.println(e);
         }
 
         try {
-            am2 = new FileScan(""+filename,E2Type,E2size,(short)8,(short)8,E2Proj,null);
+            am2 = new FileScan(systemdef.JavabaseDB.getEhf().getFileName(),E2Type,E2size,(short)8,(short)8,E2Proj,null);
         }
         catch (Exception e) {
-            System.err.println(""+e);
+            System.err.println(e);
         }
 
         FldSpec []projection = new FldSpec[16];
         projection[0] = new FldSpec(new RelSpec(RelSpec.outer),1);
-        projection[1] = new FldSpec(new RelSpec(RelSpec.innerRel),1);
+        projection[1] = new FldSpec(new RelSpec(RelSpec.outer),2);
         projection[2] = new FldSpec(new RelSpec(RelSpec.outer),3);
         projection[3] = new FldSpec(new RelSpec(RelSpec.outer),4);
         projection[4] = new FldSpec(new RelSpec(RelSpec.outer),5);
         projection[5] = new FldSpec(new RelSpec(RelSpec.outer),6);
         projection[6] = new FldSpec(new RelSpec(RelSpec.outer),7);
         projection[7] = new FldSpec(new RelSpec(RelSpec.outer),8);
-        projection[8] = new FldSpec(new RelSpec(RelSpec.outer),2);
+        projection[8] = new FldSpec(new RelSpec(RelSpec.innerRel),1);
         projection[9] = new FldSpec(new RelSpec(RelSpec.innerRel),2);
         projection[10] = new FldSpec(new RelSpec(RelSpec.innerRel),3);
         projection[11] = new FldSpec(new RelSpec(RelSpec.innerRel),4);
@@ -139,16 +136,14 @@ public class SortMergeEdgeJoin {
 
         TupleOrder asc = new TupleOrder(TupleOrder.Ascending);
         s = null;
-        Descriptor temp = new Descriptor();
-        temp.set((short)-1,(short)-1,(short)-1,(short)-1,(short)-1);
         try {
             s = new SortMerge(E1Type,8,E1size,E2Type,8,E2size,
-                    7, 4,8,4,50,am,am2,
-                    false, false,asc,10,temp,OutFilter,projection,16);
+                    2, 10,1,10,50,am,am2,
+                    false, false,asc,OutFilter,projection,16);
         }
         catch (Exception e) {
             System.err.println("ERROR IN SORT MERGE EDGE");
-            System.err.println(""+e);
+            System.err.println(e);
             e.printStackTrace();
         }
     }
@@ -160,7 +155,7 @@ public class SortMergeEdgeJoin {
             temp = s.get_next();
         }
         catch (Exception e) {
-            System.err.println(""+e);
+            System.err.println(e);
             e.printStackTrace();
         }
         return temp;
@@ -171,7 +166,7 @@ public class SortMergeEdgeJoin {
             s.close();
         }
         catch (Exception e) {
-            System.err.println(""+e);
+            System.err.println(e);
             e.printStackTrace();
         }
     }

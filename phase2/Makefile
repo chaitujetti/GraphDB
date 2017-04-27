@@ -6,7 +6,6 @@ BINPATH = $(JDKPATH)/bin
 JAVAC = $(JDKPATH)/bin/javac -classpath $(CLASSPATH)
 JAVA  = $(JDKPATH)/bin/java  -classpath $(CLASSPATH)
 
-# test Graph
 GraphTest:GraphTest.java
 	$(JAVAC) GraphTest.java
 
