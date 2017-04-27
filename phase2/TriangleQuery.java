@@ -123,6 +123,7 @@ public class TriangleQuery implements GlobalConst{
         projection2[1] = new FldSpec(new RelSpec(RelSpec.outer), 2);
         projection2[2] = new FldSpec(new RelSpec(RelSpec.outer), 3);
         
+        System.out.println("Sort Merge Join 1");
         s1 = new SortMerge(attr1,8,size1,attr1,8,size1,2,10,1,10,512,iter1,iter2,false,false,asc,expr1,projection1,3);
 
         Heapfile hf=new Heapfile("HeapFile_"+systemdef.JavabaseDB.DBname);
@@ -168,7 +169,10 @@ public class TriangleQuery implements GlobalConst{
         // } catch(Exception e){
         //     System.out.println("Sort Done, Closing Failed");
         // }
-
+        System.out.println("Disk pages read ="+ systemdef.JavabaseDB.getNoOfReads());
+        System.out.println("Disk pages written ="+ systemdef.JavabaseDB.getNoOfWrites());
+        systemdef.JavabaseDB.flushCounters();
+System.out.println("Sort Merge Join 2");
         Tuple tuple = new Tuple();
 
         attr3 = new AttrType[1];
@@ -224,6 +228,9 @@ public class TriangleQuery implements GlobalConst{
         iter3.close();
         scan.DestroyBTreeFileScan();
         hf.deleteFile();
+        System.out.println("Disk pages read ="+ systemdef.JavabaseDB.getNoOfReads());
+        System.out.println("Disk pages written ="+ systemdef.JavabaseDB.getNoOfWrites());
+        systemdef.JavabaseDB.flushCounters();
     }
 
     private static CondExpr[] condExpr1(String label1,String label2) {
@@ -264,7 +271,7 @@ public class TriangleQuery implements GlobalConst{
         return expr;
     }
 
-    public void print(String type) throws Exception {
+    public void print(SystemDefs systemdef, String type) throws Exception {
         AttrType[] attr = new AttrType[1];
         attr[0] = new AttrType(AttrType.attrString);
 
@@ -285,10 +292,14 @@ public class TriangleQuery implements GlobalConst{
                 t = iter.get_next();
             }
             iter.close();
+            System.out.println("Disk pages read ="+ systemdef.JavabaseDB.getNoOfReads());
+            System.out.println("Disk pages written ="+ systemdef.JavabaseDB.getNoOfWrites());
+            systemdef.JavabaseDB.flushCounters();
             return;
         } else {
             Sort newSort = new Sort(attr, (short)1, size, iter, 1, asc, size[0], 10);
             if(type.equals("b")){
+                System.out.println("Sorting Files");
                 Tuple t = new Tuple();
                 t = newSort.get_next();
                 while(t!=null){
@@ -302,8 +313,13 @@ public class TriangleQuery implements GlobalConst{
                 }catch(Exception e){
                     System.out.println("Sorting Done, Close Failed");
                 }
+
+                System.out.println("Disk pages read ="+ systemdef.JavabaseDB.getNoOfReads());
+                System.out.println("Disk pages written ="+ systemdef.JavabaseDB.getNoOfWrites());
+                systemdef.JavabaseDB.flushCounters();
                 return;
             } else {
+                System.out.println("Sorting Files and checking for duplicates");
                 Tuple t = new Tuple();
                 String tstr = null;
                 String lstr = null;
@@ -326,6 +342,9 @@ public class TriangleQuery implements GlobalConst{
                 }catch(Exception e){
                     System.out.println("Sorting Done, Close Failed");
                 }
+                System.out.println("Disk pages read ="+ systemdef.JavabaseDB.getNoOfReads());
+                System.out.println("Disk pages written ="+ systemdef.JavabaseDB.getNoOfWrites());
+                systemdef.JavabaseDB.flushCounters();
                 return;
             }
         }

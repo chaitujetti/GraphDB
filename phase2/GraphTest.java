@@ -323,7 +323,7 @@ class GraphDriver {
                     // }
                     String input10 = varargs[2];
                     TriangleQuery tq = new TriangleQuery(systemdef,input10);
-                    tq.print(varargs[1]);
+                    tq.print(systemdef, varargs[1]);
                     tq.close();
                     
                     break;

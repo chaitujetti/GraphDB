@@ -1,0 +1,18 @@
+GROUP 3 
+
+MEMBERS:
+Abhishek Chandrasekaran (1211202847)
+Ankur Bhardwaj (1211126277)
+Bharath Kumar Suresh (1211182086)
+Joel Mascarenhas (1211194319)
+N V K Chaitanya Jetti (1211173805)
+Vamsi Krishna Godavarthi (1210933825)
+
+
+EXECUTION INSTRUCTIONS:
+
+1.EDIT ALL THE MAKEFILES WITH THE APPROPRIATE JDK
+2. RUN "make db"
+3. RUN "make test"
+4. SELECT THE REQUIRED OPTION AND ENTER THE VALUES AS DISPLAYED
+
