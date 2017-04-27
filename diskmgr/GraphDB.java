@@ -43,7 +43,7 @@ public class GraphDB extends DB
 
     public NodeHeapfile nhf;
     public EdgeHeapfile ehf;
-
+    
     public BTreeFile nodeLabels_BFile;
     public BTreeFile edgeLabels_BFile;
     public BTreeFile edgeSourceLabels_BFile;

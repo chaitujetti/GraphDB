@@ -44,10 +44,8 @@ public class batchedgeinsert implements GlobalConst
         for (int i=0;i<content.size();i++)
         {
             Edge iter = new Edge();
-            NScan nodescan = systemdef.JavabaseDB.getNhf().openScan();
             NID dest_nid = new NID();
             NID source_nid = new NID();
-            Node current_node;
             String[] temp = content.get(i).split(" ");
 
             source_nid = getNID(temp[0], systemdef);
@@ -56,8 +54,6 @@ public class batchedgeinsert implements GlobalConst
                 System.out.println("Source Node does not exist");
             } else if(dest_nid == null){
                 System.out.println("Destination Node does not exist");
-            } else if(checkEdgeExists(temp[0], temp[1], temp[2], systemdef)) {
-                System.out.println("Edge already exists: " + temp[2]);
             } else {
                 iter.setSource(source_nid);
                 iter.setDestination(dest_nid);
@@ -67,6 +63,9 @@ public class batchedgeinsert implements GlobalConst
                 iter.setWeight(Integer.parseInt(temp[3]));
                 systemdef.JavabaseDB.insertEdgeIntoGraphDB(iter.getTupleByteArray());
             }
+            // else if(checkEdgeExists(temp[0], temp[1], temp[2], systemdef)) {
+            //     System.out.println("Edge already exists: " + temp[2]);
+            // } 
             
             counter++;
         }
@@ -117,21 +116,24 @@ public class batchedgeinsert implements GlobalConst
     }
 
     public static NID getNID(String node, SystemDefs systemdef)
-        throws IOException, InvalidTupleSizeException, InvalidTypeException, 
-        FieldNumberOutOfBoundException, ScanIteratorException, KeyNotMatchException,
-        IteratorException, ConstructPageException, PinPageException, UnpinPageException
+        throws IOException, InvalidTupleSizeException, InvalidTypeException,
+        FieldNumberOutOfBoundException, ScanIteratorException, KeyNotMatchException, 
+        IteratorException, ConstructPageException, PinPageException, UnpinPageException,
+        InvalidFrameNumberException, ReplacerException, PageUnpinnedException,
+        HashEntryNotFoundException
     {
         BTFileScan nodescan = systemdef.JavabaseDB.getNodeIndex().new_scan(new StringKey(node), new StringKey(node));
         KeyDataEntry entry = nodescan.get_next();
-        NID nodeId = new NID();
+        nodescan.DestroyBTreeFileScan();
 
+        NID nodeId = new NID();
         if(entry != null) {
             LeafData leafNode=(LeafData)entry.data;
             RID record = leafNode.getData();
             nodeId.pageNo.pid = record.pageNo.pid;
             nodeId.slotNo = record.slotNo;
         }
-
+        
         return nodeId;
     }
 }

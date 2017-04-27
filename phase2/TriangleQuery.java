@@ -17,17 +17,52 @@ public class TriangleQuery implements GlobalConst{
     SortMerge s1,s2;
 
     public TriangleQuery(SystemDefs systemdef,String query) throws Exception {
+
         String[] queries = query.split(";");
         expr1 = condExpr1(queries[0], queries[1]);
         expr2 = condExpr2(queries[2]);
+
         exprf1 = new CondExpr[2];
+        exprf1[0] = new CondExpr();
         exprf1[0] = expr1[1];
         exprf1[1] = null;
+
         exprf2 = new CondExpr[2];
-        exprf2[0] = expr1[2];
+        exprf2[0] = new CondExpr();
+        String[] values = queries[1].split(":");
+        exprf2[0] = new CondExpr();
+        exprf2[0].next   = null;
+        exprf2[0].type1 = new AttrType(AttrType.attrSymbol);
+        if(values[0].equals("L")){
+            exprf2[0].op    = new AttrOperator(AttrOperator.aopEQ);
+            exprf2[0].type2 = new AttrType(AttrType.attrString);
+            exprf2[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),3);
+            exprf2[0].operand2.string = values[1];
+        } else {
+            exprf2[0].op    = new AttrOperator(AttrOperator.aopLE);
+            exprf2[0].type2 = new AttrType(AttrType.attrInteger);
+            exprf2[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),4);
+            exprf2[0].operand2.integer = Integer.parseInt(values[1]);
+        }
         exprf2[1] = null;
+
         exprf3 = new CondExpr[2];
-        exprf3[0] = expr2[2];
+        exprf3[0] = new CondExpr();
+        values = queries[2].split(":");
+        exprf3[0] = new CondExpr();
+        exprf3[0].next   = null;
+        exprf3[0].type1 = new AttrType(AttrType.attrSymbol);
+        if(values[0].equals("L")){
+            exprf3[0].op    = new AttrOperator(AttrOperator.aopEQ);
+            exprf3[0].type2 = new AttrType(AttrType.attrString);
+            exprf3[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),3);
+            exprf3[0].operand2.string = values[1];
+        } else {
+            exprf3[0].op    = new AttrOperator(AttrOperator.aopLE);
+            exprf3[0].type2 = new AttrType(AttrType.attrInteger);
+            exprf3[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),4);
+            exprf3[0].operand2.integer = Integer.parseInt(values[1]);
+        }
         exprf3[1] = null;
 
         attr1 = new AttrType[8];
@@ -66,9 +101,8 @@ public class TriangleQuery implements GlobalConst{
         otype[1] = new AttrType(AttrType.attrString);
         otype[2] = new AttrType(AttrType.attrString);
 
-        iter1 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,null);
-        iter2 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,null);
-        iter3 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,null);
+        iter1 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,exprf1);
+        iter2 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,exprf2);
 
         TupleOrder asc = new TupleOrder(TupleOrder.Ascending);
         
@@ -86,21 +120,32 @@ public class TriangleQuery implements GlobalConst{
 
         Heapfile hf=new Heapfile("HeapFile_"+systemdef.JavabaseDB.DBname);
         Tuple tem = new Tuple();
-        tem.setHdr((short)3, attr2, size2);
         tem = s1.get_next();
+        tem.setHdr((short)3, attr2, size2);
+        if (tem == null){
+            System.out.println("tem is null");
+        }
         while(tem != null){
+            tem.print(otype);
             hf.insertRecord(tem.getTupleByteArray());
+            tem.setHdr((short)3, attr2, size2);
             tem = s1.get_next();
         }
+
         iter1.close();
         iter2.close();
-        s1.close();
-
+        try{
+            s1.close();
+        } catch(Exception e){
+            System.out.println("Sort Done, Closing Failed");
+        }
+        
+        // iter3 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,exprf3);
         iter4 = new FileScan(hf._fileName,attr2,size2,(short)3,(short)3,projection2,null);
 
-        s2 = new SortMerge(attr2,3,size2,attr1,8,size1,3,10,1,10,1024,iter4,iter3,false,false,asc,expr2,projection2,3);
+        s2 = new SortMerge(attr2,3,size2,attr1,8,size1,3,10,1,10,512,iter4,iter3,false,false,asc,expr2,projection2,3);
 
-        Tuple temp= s2.get_next();
+        Tuple temp = s2.get_next();
         if (temp == null){
             System.out.println("temp is null");
         }
@@ -110,13 +155,18 @@ public class TriangleQuery implements GlobalConst{
         }
 
         iter4.close();
-        iter3.close();
-        s2.close();
+        // iter3.close();
+        try{
+            s2.close();
+        } catch(Exception e){
+            System.out.println("Sort Done, Closing Failed");
+        }
+        hf.deleteFile();
     }
 
     private static CondExpr[] condExpr1(String label1,String label2) {
-        CondExpr[] expr= new CondExpr[4];
-        expr[3] = null;
+        CondExpr[] expr= new CondExpr[2];
+        expr[1] = null;
 
         expr[0] = new CondExpr();
         expr[0].next  = null;
@@ -126,76 +176,28 @@ public class TriangleQuery implements GlobalConst{
         expr[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),2);
         expr[0].operand2.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),1);
 
-        String[] values = label1.split(":");
-        expr[1] = new CondExpr();
-        expr[1].next   = null;
-        expr[1].type1 = new AttrType(AttrType.attrSymbol);
-        if(values[0].equals("L")){
-            expr[1].op    = new AttrOperator(AttrOperator.aopEQ);
-            expr[1].type2 = new AttrType(AttrType.attrString);
-            expr[1].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),3);
-            expr[1].operand2.string = values[1];
-        } else {
-            expr[1].op    = new AttrOperator(AttrOperator.aopLE);
-            expr[1].type2 = new AttrType(AttrType.attrInteger);
-            expr[1].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),4);
-            expr[1].operand2.integer = Integer.parseInt(values[1]);
-        }
-        
-        values = label2.split(":");
-        expr[2] = new CondExpr();
-        expr[2].next   = null;
-        expr[2].type1 = new AttrType(AttrType.attrSymbol);
-        if(values[0].equals("L")){
-            expr[2].op    = new AttrOperator(AttrOperator.aopEQ);
-            expr[2].type2 = new AttrType(AttrType.attrString);
-            expr[2].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),3);
-            expr[2].operand2.string = values[1];
-        } else {
-            expr[2].op    = new AttrOperator(AttrOperator.aopLE);
-            expr[2].type2 = new AttrType(AttrType.attrInteger);
-            expr[2].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),4);
-            expr[2].operand2.integer = Integer.parseInt(values[1]);
-        }
-
         return expr;
     }
 
     private static CondExpr[] condExpr2(String label){
-        CondExpr[] expr = new CondExpr[4];
-        expr[3] = null;
+        CondExpr[] expr = new CondExpr[3];
+        expr[2] = null;
   
         expr[0] = new CondExpr();
         expr[0].next  = null;
         expr[0].op    = new AttrOperator(AttrOperator.aopEQ);
         expr[0].type1 = new AttrType(AttrType.attrSymbol);
         expr[0].type2 = new AttrType(AttrType.attrSymbol);
-        expr[0].operand2.symbol = new FldSpec (new RelSpec(RelSpec.outer),3);
-        expr[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),1);
+        expr[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),3);
+        expr[0].operand2.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),1);
   
         expr[1] = new CondExpr();
         expr[1].next   = null;
         expr[1].op    = new AttrOperator(AttrOperator.aopEQ);
         expr[1].type1 = new AttrType(AttrType.attrSymbol);
         expr[1].type2 = new AttrType(AttrType.attrSymbol);
-        expr[1].operand2.symbol =  new FldSpec (new RelSpec(RelSpec.outer),1);
-        expr[1].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),2);
-  
-        String[] values = label.split(":");
-        expr[2] = new CondExpr();
-        expr[2].next   = null;
-        expr[2].type1 = new AttrType(AttrType.attrSymbol);
-        if(values[0].equals("L")){
-            expr[2].op    = new AttrOperator(AttrOperator.aopEQ);
-            expr[2].type2 = new AttrType(AttrType.attrString);
-            expr[2].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),3);
-            expr[2].operand2.string = values[1];
-        } else {
-            expr[2].op    = new AttrOperator(AttrOperator.aopLE);
-            expr[2].type2 = new AttrType(AttrType.attrInteger);
-            expr[2].operand1.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),4);
-            expr[2].operand2.integer = Integer.parseInt(values[1]);
-        }
+        expr[1].operand1.symbol =  new FldSpec (new RelSpec(RelSpec.outer),1);
+        expr[1].operand2.symbol = new FldSpec (new RelSpec(RelSpec.innerRel),2);
 
         return expr;
     }
