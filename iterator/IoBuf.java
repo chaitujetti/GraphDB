@@ -102,6 +102,7 @@ public class IoBuf implements GlobalConst{
 	  // get tuples from 
 	  if ((temptuple= i_buf.Get(buf)) == null)
 	    {
+        i_buf.close();
 	      done = true;
 	      return null;
 	    }

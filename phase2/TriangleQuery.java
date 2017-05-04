@@ -19,7 +19,7 @@ public class TriangleQuery implements GlobalConst{
     public TriangleQuery(SystemDefs systemdef,String query) throws Exception {
         this.results = new Heapfile("ResultHeapFile_"+systemdef.JavabaseDB.DBname);
 
-        FileScan iter1,iter2, iter3;
+        FileScan iter1,iter2, iter3, iter4;
         CondExpr[] expr1,expr2, exprf1, exprf2, exprf3;
         AttrType[] attr1,attr2, attr3, otype;
         FldSpec[] projection1,projection2;
@@ -31,12 +31,26 @@ public class TriangleQuery implements GlobalConst{
 
         exprf1 = new CondExpr[2];
         exprf1[0] = new CondExpr();
-        exprf1[0] = expr1[1];
+        String[] values = queries[0].split(":");
+        exprf1[0] = new CondExpr();
+        exprf1[0].next   = null;
+        exprf1[0].type1 = new AttrType(AttrType.attrSymbol);
+        if(values[0].equals("L")){
+            exprf1[0].op    = new AttrOperator(AttrOperator.aopEQ);
+            exprf1[0].type2 = new AttrType(AttrType.attrString);
+            exprf1[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),3);
+            exprf1[0].operand2.string = values[1];
+        } else {
+            exprf1[0].op    = new AttrOperator(AttrOperator.aopLE);
+            exprf1[0].type2 = new AttrType(AttrType.attrInteger);
+            exprf1[0].operand1.symbol = new FldSpec (new RelSpec(RelSpec.outer),4);
+            exprf1[0].operand2.integer = Integer.parseInt(values[1]);
+        }
         exprf1[1] = null;
 
         exprf2 = new CondExpr[2];
         exprf2[0] = new CondExpr();
-        String[] values = queries[1].split(":");
+        values = queries[1].split(":");
         exprf2[0] = new CondExpr();
         exprf2[0].next   = null;
         exprf2[0].type1 = new AttrType(AttrType.attrSymbol);
@@ -124,17 +138,20 @@ public class TriangleQuery implements GlobalConst{
         projection2[2] = new FldSpec(new RelSpec(RelSpec.outer), 3);
         
         System.out.println("Sort Merge Join 1");
-        s1 = new SortMerge(attr1,8,size1,attr1,8,size1,2,10,1,10,512,iter1,iter2,false,false,asc,expr1,projection1,3);
+        s1 = new SortMerge(attr1,8,size1,attr1,8,size1,2,10,1,10,256,iter1,iter2,false,false,asc,expr1,projection1,3);
 
         Heapfile hf=new Heapfile("HeapFile_"+systemdef.JavabaseDB.DBname);
         Tuple tem = new Tuple();
         tem = s1.get_next();
-        tem.setHdr((short)3, attr2, size2);
         if (tem == null){
             System.out.println("tem is null");
-        }
+            hf.deleteFile();
+            return;
+        }else{
+            tem.setHdr((short)3, attr2, size2);
+        } 
         while(tem != null){
-            // tem.print(otype);
+            // tem.print(attr2);
             hf.insertRecord(tem.getTupleByteArray());
             tem.setHdr((short)3, attr2, size2);
             tem = s1.get_next();
@@ -145,92 +162,43 @@ public class TriangleQuery implements GlobalConst{
         try{
             s1.close();
         } catch(Exception e){
-            System.out.println("Sort Done, Closing Failed");
+            System.out.println("Sort Merge 2 Done, Closing Failed");
         }
         
-        // iter3 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,exprf3);
+        iter4 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,exprf3);
         iter3 = new FileScan(hf._fileName,attr2,size2,(short)3,(short)3,projection2,null);
 
-        // s2 = new SortMerge(attr2,3,size2,attr1,8,size1,3,10,1,10,512,iter3,iter3,false,false,asc,expr2,projection2,3);
 
-        // Tuple temp = s2.get_next();
-        // if (temp == null){
-        //     System.out.println("temp is null");
-        // }
-        // while(temp != null){
-        //     temp.print(otype);
-        //     temp = s2.get_next();
-        // }
-
-        // 
-        // // iter3.close();
-        // try{
-        //     s2.close();
-        // } catch(Exception e){
-        //     System.out.println("Sort Done, Closing Failed");
-        // }
         System.out.println("Disk pages read ="+ systemdef.JavabaseDB.getNoOfReads());
         System.out.println("Disk pages written ="+ systemdef.JavabaseDB.getNoOfWrites());
         systemdef.JavabaseDB.flushCounters();
-System.out.println("Sort Merge Join 2");
-        Tuple tuple = new Tuple();
 
-        attr3 = new AttrType[1];
-        attr3[0] = new AttrType(AttrType.attrString);
+        System.out.println("Sort Merge Join 2");
+        s2 = new SortMerge(attr2,3,size2,attr1,8,size1,3,10,1,10,256,iter3,iter4,false,false,asc,expr2,projection2,3);
 
-        short[] size3 = new short[3];
-        size3[0] = 3 * Tuple.LABEL_MAX_LENGTH + 2;
-
-
-        String des, merged;
-        BTFileScan scan = null;
-        KeyDataEntry entry;
-        Tuple temp = iter3.get_next();
-        EID edgeId = new EID();
+        Tuple temp = s2.get_next();
         if (temp == null){
             System.out.println("temp is null");
+            hf.deleteFile();
+            return;
+        } else {
+            temp.setHdr((short)3, attr2, size2);
         }
         while(temp != null){
-            des = temp.getStrFld(3);
-            scan = systemdef.JavabaseDB.getEdgeSourceIndex().new_scan(new StringKey(des), new StringKey(des));
-            entry = scan.get_next();
-            while(entry != null) {
-                LeafData leafNode=(LeafData)entry.data;
-                RID record = leafNode.getData();
-                edgeId.pageNo.pid = record.pageNo.pid;
-                edgeId.slotNo = record.slotNo;
-                Edge edge=systemdef.JavabaseDB.getEhf().getEdge(edgeId);
-                if(edge.getDestinationLabel().equals(temp.getStrFld(1))){
-                    if(values[0].equals("L")){
-                        if(edge.getLabel().equals(values[1])){
-                            // temp.print(otype);
-                            merged = temp.getStrFld(1) + "_" + temp.getStrFld(2) + "_" + temp.getStrFld(3);
-                            tuple.setHdr((short)1, attr3, size3);
-                            tuple.setStrFld(1, merged);
-                            this.results.insertRecord(tuple.getTupleByteArray());
-                        }
-                    }
-                    if(values[0].equals("W")){
-                        if(edge.getWeight() <= Integer.parseInt(values[1])){
-                            // temp.print(otype);
-                            merged = temp.getStrFld(1) + "_" + temp.getStrFld(2) + "_" + temp.getStrFld(3);
-                            tuple.setHdr((short)1, attr3, size3);
-                            tuple.setStrFld(1, merged);
-                            this.results.insertRecord(tuple.getTupleByteArray());
-                        }
-                    }
-                }
-                entry = scan.get_next();
-            }
-            temp = iter3.get_next();
+            // temp.print(attr2);
+            temp.setHdr((short)3, attr2, size2);
+            this.results.insertRecord(temp.getTupleByteArray());
+            temp = s2.get_next();
         }
 
+        iter4.close();
         iter3.close();
-        scan.DestroyBTreeFileScan();
+        try{
+            s2.close();
+        } catch(Exception e){
+            System.out.println("Sort Merge 2 Done, Closing Failed");
+        }
         hf.deleteFile();
-        System.out.println("Disk pages read ="+ systemdef.JavabaseDB.getNoOfReads());
-        System.out.println("Disk pages written ="+ systemdef.JavabaseDB.getNoOfWrites());
-        systemdef.JavabaseDB.flushCounters();
     }
 
     private static CondExpr[] condExpr1(String label1,String label2) {
@@ -272,18 +240,24 @@ System.out.println("Sort Merge Join 2");
     }
 
     public void print(SystemDefs systemdef, String type) throws Exception {
-        AttrType[] attr = new AttrType[1];
-        attr[0] = new AttrType(AttrType.attrString);
-
+        AttrType[] attr = new AttrType[3];
+        attr[0] = new AttrType(AttrType.attrString);//s1
+        attr[1] = new AttrType(AttrType.attrString);//d1 or s2
+        attr[2] = new AttrType(AttrType.attrString);//d2
+        
         short[] size = new short[3];
-        size[0] = 3 * Tuple.LABEL_MAX_LENGTH + 2;
+        size[0] = Tuple.LABEL_MAX_LENGTH;
+        size[1] = Tuple.LABEL_MAX_LENGTH;
+        size[2] = Tuple.LABEL_MAX_LENGTH;
 
-        FldSpec[] projection = new FldSpec[1];
+        FldSpec[] projection = new FldSpec[3];
         projection[0] = new FldSpec(new RelSpec(RelSpec.outer), 1);
+        projection[1] = new FldSpec(new RelSpec(RelSpec.outer), 2);
+        projection[2] = new FldSpec(new RelSpec(RelSpec.outer), 3);
 
         TupleOrder asc = new TupleOrder(TupleOrder.Ascending);
 
-        FileScan iter = new FileScan(this.results._fileName,attr,size,(short)1,(short)1,projection,null);
+        FileScan iter = new FileScan(this.results._fileName,attr,size,(short)3,(short)3,projection,null);
         if(type.equals("a")){
             Tuple t = new Tuple();
             t = iter.get_next();
@@ -297,7 +271,7 @@ System.out.println("Sort Merge Join 2");
             systemdef.JavabaseDB.flushCounters();
             return;
         } else {
-            Sort newSort = new Sort(attr, (short)1, size, iter, 1, asc, size[0], 10);
+            Sort newSort = new Sort(attr, (short)3, size, iter, 1, asc, size[0], 10);
             if(type.equals("b")){
                 System.out.println("Sorting Files");
                 Tuple t = new Tuple();
@@ -324,7 +298,9 @@ System.out.println("Sort Merge Join 2");
                 String tstr = null;
                 String lstr = null;
                 t = newSort.get_next();
-                tstr = t.getStrFld(1);
+                if(t!=null){
+                    tstr = t.getStrFld(1);
+                }
                 while(t!=null){
                     if(!tstr.equals(lstr)){
                         t.print(attr);
