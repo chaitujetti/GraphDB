@@ -175,7 +175,7 @@ public class IoBuf implements GlobalConst{
     throws IOException,
 	   Exception
     {
-      
+      done = false;
       mode = READ_BUFFER;
       if (flushed)                   // Has the output buffe been flushed?
 	{

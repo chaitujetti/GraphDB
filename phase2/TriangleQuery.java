@@ -124,7 +124,7 @@ public class TriangleQuery implements GlobalConst{
 
         iter1 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,exprf1);
         iter2 = new FileScan(systemdef.JavabaseDB.getEhf()._fileName,attr1,size1,(short)8,(short)8,proj1,exprf2);
-
+        
         TupleOrder asc = new TupleOrder(TupleOrder.Ascending);
         
         projection1 = new FldSpec[3];
